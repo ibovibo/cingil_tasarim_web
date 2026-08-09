@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #fbf9f5; }
+    * { box-sizing: border-box; }
+    @keyframes wordGold { 0%, 100% { color: #fff; } 50% { color: #c8a04e; } }
+    @keyframes svcMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    ::selection { background: #c8a04e; color: #fff; }
+    a { color: #c8a04e; text-decoration: none; }
+  </style>
+</helmet>
+
+<div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
+
+  <header style="position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" style="width:30px; height:auto;" />
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:28px; color:#c8a04e; line-height:1;">Cingil</div>
+        <div style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
+      </div>
+    </div>
+    <nav style="display:flex; gap:14px; align-items:center;">
+      <a href="#home" style="color:{{ navHomeColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">ANA SAYFA</a>
+      <a href="#about" style="color:{{ navAboutColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HAKKIMIZDA</a>
+      <a href="#services" style="color:{{ navServicesColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HİZMETLERİMİZ</a>
+      <a href="#iletisim" style="color:{{ navContactColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">İLETİŞİM</a>
+    </nav>
+    <a href="https://wa.me/905434818591" style="display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; padding:9px 14px; border-radius:30px; font-size:12px; font-weight:600; line-height:1; white-space:nowrap; flex-shrink:0; margin-left:12px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.149-.15.347-.397.52-.596.174-.198.232-.34.347-.567.116-.228.058-.427-.04-.596-.099-.174-.892-2.146-1.223-2.874-.325-.71-.658-.61-.905-.62-.234-.01-.502-.012-.77-.012-.267 0-.7.1-.966.397-.267.297-1.02.995-1.02 2.43 0 1.436 1.02 2.828 1.163 3.023.148.199 1.93 2.938 4.68 4.001 2.75 1.063 2.75.71 3.243.669.492-.043 1.593-.649 1.816-1.276.223-.63.223-1.17.15-1.276-.075-.106-.273-.174-.57-.297z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.98.575 3.826 1.567 5.383L2 22l4.727-1.53A9.94 9.94 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 0 1-4.09-1.117l-.294-.174-2.81.91.919-2.727-.19-.28A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+      <span>Bize Ulaş</span>
+    </a>
+  </header>
+
+  <section id="home" style="padding:56px 60px 0;">
+    <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; width:85%; margin:0 auto;">
+      <img src="./assets/ana-header.png" alt="Gelin çiçekler arasında" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block;" />
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0.68) 0%, rgba(23,21,18,0) 15%, rgba(23,21,18,0.2) 50%, rgba(23,21,18,0) 55%, rgba(23,21,18,0.75) 100%);"></div>
+      <div style="position:absolute; left:0; right:0; bottom:0; height:55%; -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);"></div>
+      <h2 style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; padding:0 40px 50px 60px; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(52px,8.8vw,118px); line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none;">Mutluluğunuzu</span><span style="color:#c8a04e;">BİZ TASARLIYALIM</span></h2>
+    </div>
+  </section>
+
+  <section id="about" style="padding:160px 60px 100px;">
+    <div style="text-align:center; margin-bottom:110px;">
+      <div style="display:inline-block; font-size:60px; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1.5fr; gap:40px; align-items:start;">
+      <div style="border-radius:24px; overflow:hidden; aspect-ratio:4/5; max-width:600px; margin-left:180px;">
+        <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block;" />
+      </div>
+      <div style="padding-top:0; margin-left:-40px;">
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:56px; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
+      <p style="font-size:clamp(17px,2.5vw,39px); line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:64px; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section style="background:#171512; padding:100px 60px;">
+    <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; white-space:nowrap; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
+  </section>
+
+  <section id="services" style="padding:80px 60px 30px; text-align:center;">
+    <h1 style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:52px; line-height:1.1; margin:0 0 18px; text-transform:uppercase; letter-spacing:1px;">Hizmet<span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; text-transform:none;">lerimiz</span></h1>
+  </section>
+
+  <section style="padding:40px 60px 100px; max-width:1440px; margin:0 auto;">
+    <div style="overflow:hidden;">
+      <div style="display:flex; gap:24px; width:fit-content; animation:svcMarquee 50s linear infinite;">
+        <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
+          <a href="#" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16; flex:0 0 440px;">
+            <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
+            <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:20px 22px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px;">
+              <h3 style="font-family:'Poppins',sans-serif; font-weight:600; font-size:17px; text-transform:uppercase; letter-spacing:0.5px; color:#fff; margin:0;">{{ s.title }}</h3>
+              <span style="font-size:12px; color:#c8a04e; white-space:nowrap;">→</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin:0 60px 100px; padding:60px; border-radius:28px; background:#171512; display:flex; align-items:center; justify-content:space-between; gap:40px; flex-wrap:wrap;">
+    <h3 style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:30px; text-transform:uppercase; margin:0; color:#fff; max-width:520px; line-height:1.25;">Hayalinizdeki günü <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; text-transform:none;">birlikte</span> tasarlayalım</h3>
+    <div style="display:flex; gap:14px;">
+      <a href="tel:+905434818591" style="padding:14px 28px; background:#c8a04e; color:#171512; font-size:13px; font-weight:600; border-radius:30px;">Bize Ulaşın</a>
+      <a href="https://wa.me/905434818591" style="padding:14px 28px; border:1px solid #4a4640; color:#fff; font-size:13px; font-weight:600; border-radius:30px;">WhatsApp</a>
+    </div>
+  </section>
+
+  <section id="iletisim" style="background:#171512; padding:90px 60px; color:#fff;">
+    <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:48px; line-height:1.2; text-transform:uppercase; margin:0 0 60px; max-width:720px;">Hayalinizi <span style="font-weight:700; color:#fff;">birlikte</span><br />konuşalım.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:60px; border-top:1px solid #322e28; padding-top:50px;">
+      <div>
+        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">KONUM</div>
+        <p style="font-size:16px; line-height:1.6; margin:0 0 34px;">Cumhuriyet Mahallesi<br />Yavuz Sultan Selim Bulvarı No: 167/A</p>
+        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">İLETİŞİM KANALLARI</div>
+        <p style="font-size:16px; margin:0 0 6px;">muzeyyenkasimoglu@hotmail.com</p>
+        <p style="font-size:18px; font-weight:600; margin:0 0 34px;">0543 481 85 91</p>
+        <div>
+          <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">INSTAGRAM</div>
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#fff; font-size:16px;">@cingil_tasarim_organizasyon</a>
+        </div>
+      </div>
+      <div style="border-radius:20px; overflow:hidden; align-self:stretch; margin-top:-260px; max-width:85%;">
+        <iframe src="https://www.google.com/maps?q=Cingil+Tasar%C4%B1m+Organizasyon,+Yavuz+Selim+Blv,+Ortahisar%2FTrabzon&z=17&output=embed" width="100%" height="100%" style="border:0; display:block; filter:grayscale(0.15) contrast(1.05);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:0 60px 40px;">
+    <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:50px; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">Cingil Tasarım</div>
+        <p style="font-size:13px; line-height:1.7; color:#7a7669; font-weight:300; max-width:300px; margin:0;">Düğün • Nişan • Kına • Özel Etkinlik Organizasyonları</p>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Menü</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <a href="#" style="color:#7a7669;">Ana Sayfa</a>
+          <a href="#services" style="color:#7a7669;">Hizmetlerimiz</a>
+          <a href="#" style="color:#7a7669;">Hakkımızda</a>
+          <a href="#" style="color:#7a7669;">İletişim</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Sosyal Medya</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#7a7669;">Instagram</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">İletişim</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <span>Cumhuriyet Mahallesi, Yavuz Sultan Selim Bulvarı No: 167/A</span>
+          <a href="tel:+905434818591" style="color:#7a7669;">0543 481 85 91</a>
+          <a href="https://wa.me/905434818591" style="color:#7a7669;">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #ece7dc; padding-top:22px; font-size:12px; color:#a29e92; text-align:center;">© 2026 Cingil Tasarım Organizasyon. Tüm Hakları Saklıdır.</div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { active: "home", scrolled: false };
+
+  componentDidMount() {
+    this.sectionIds = ["home", "about", "services", "iletisim"];
+    this.onScroll = () => {
+      const mid = window.innerHeight * 0.35;
+      let current = "home";
+      for (const id of this.sectionIds) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= mid) current = id;
+      }
+      const scrolled = window.scrollY > 10;
+      if (current !== this.state.active || scrolled !== this.state.scrolled) {
+        this.setState({ active: current, scrolled });
+      }
+    };
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this.onScroll();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll);
+  }
+
+  renderVals() {
+    const gold = "#c8a04e";
+    const dark = this.state.scrolled ? "#f4ecdf" : "#171512";
+    const navHomeColor = this.state.active === "home" ? gold : dark;
+    const navServicesColor = this.state.active === "services" ? gold : dark;
+    const navAboutColor = this.state.active === "about" ? gold : dark;
+    const navContactColor = this.state.active === "iletisim" ? gold : dark;
+    const headerBg = this.state.scrolled ? "rgba(23,21,18,0.55)" : "#fbf9f5";
+    const headerBorder = this.state.scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid #ece7dc";
+    const headerBlur = this.state.scrolled ? "blur(16px)" : "none";
+    const taglineColor = this.state.scrolled ? "#f4ecdf" : "#171512";
+    const raw = [
+      ["Organizasyon", "Konseptten uygulamaya, günün her detayını sizin için baştan sona planlıyoruz."],
+      ["İsteme, Söz & Nişan", "Ailelerin buluştuğu bu özel günü ince detaylarla süslüyoruz."],
+      ["Kına Salonu", "Renkli ve enerjik kına gecelerini unutulmaz sahnelere taşıyoruz."],
+      ["Çiçek Tasarımı", "Temanıza uygun buket ve çiçek düzenlemeleriyle mekanı süslüyoruz."],
+      ["Toplantı, Seminer & Etkinlik", "Kurumsal etkinliklerinizi profesyonel bir organizasyonla yönetiyoruz."],
+      ["Açılış Organizasyonu", "İşletmenizin açılışını etkileyici bir davetle hayata geçiriyoruz."],
+      ["Mezuniyet", "Bu gururlu günü arkadaşlarla dolu şık bir kutlamaya dönüştürüyoruz."],
+      ["Doğum Günü", "Küçük veya büyük, her doğum gününü keyifli ve akılda kalıcı bir kutlamaya dönüştürüyoruz."],
+      ["Yemek Etkinlik", "Lezzet ve estetiği bir araya getiren özel yemek organizasyonları kuruyoruz."],
+      ["DJ, Orkestra & Ses Hizmetleri", "Doğru müzik ve ses sistemiyle etkinliğinizin atmosferini yükseltiyoruz."]
+    ];
+    const services = raw.map((r, i) => ({
+      num: String(i + 1).padStart(2, "0"),
+      title: r[0],
+      desc: r[1],
+      imgId: "svc-" + (i + 1),
+      colSpan: (i === 0 || i === 5) ? 2 : 1,
+      rowSpan: (i === 0 || i === 5) ? 2 : 1
+    }));
+    const features = [
+      ["01", "Kusursuz Planlama", "Her saniyeyi bir sanat eseri gibi kurguluyor, sürprizlere yer bırakmıyoruz."],
+      ["02", "Sinematik Bakış", "Sadece çekim yapmıyor, hikayenizi sinema diliyle tüm dünyaya anlatıyoruz."],
+      ["03", "Dijital Mimari", "Markanızı dijitalin en prestijli noktasına taşıyan modern çözümler üretiyoruz."]
+    ].map(f => ({ num: f[0], title: f[1], desc: f[2] }));
+    const stats = [
+      ["5.000+", "Tamamlanan Proje"],
+      ["5.000+", "Mutlu Çift & Marka"],
+      ["15+", "Yıllık Deneyim"],
+      ["25+", "Yaratıcı Ekip"]
+    ].map(s => ({ num: s[0], label: s[1] }));
+    const servicesLoop = services.concat(services.map(s => ({ ...s, imgId: s.imgId + "-2" })));
+    return { services, servicesLoop, features, stats, navHomeColor, navServicesColor, navAboutColor, navContactColor, headerBg, headerBorder, headerBlur, taglineColor };
+  }
+}
+</script>
+</body>
+</html>
