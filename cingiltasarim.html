@@ -32,7 +32,7 @@
         <div style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
       </div>
     </div>
-    <nav style="display:flex; gap:14px; align-items:center;">
+    <nav style="display:flex; gap:36px; align-items:center;">
       <a href="#home" style="color:{{ navHomeColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">ANA SAYFA</a>
       <a href="#about" style="color:{{ navAboutColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HAKKIMIZDA</a>
       <a href="#services" style="color:{{ navServicesColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HİZMETLERİMİZ</a>
@@ -74,15 +74,23 @@
     <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; white-space:nowrap; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
   </section>
 
-  <section id="services" style="padding:80px 60px 30px; text-align:center;">
-    <h1 style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:52px; line-height:1.1; margin:0 0 18px; text-transform:uppercase; letter-spacing:1px;">Hizmet<span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; text-transform:none;">lerimiz</span></h1>
-  </section>
-
-  <section style="padding:40px 60px 100px; max-width:1440px; margin:0 auto;">
-    <div style="overflow:hidden;">
+  <section id="services" style="padding:180px 0 100px 20px; max-width:1600px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:minmax(620px, 1fr) minmax(0, 1.55fr); gap:28px; align-items:center;">
+      <div style="text-align:left; max-width:960px; margin-left:-240px; transform:translateY(-70px);">
+      <p style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,3.2vw,46px); line-height:1.2; color:#171512; margin:0 0 60px; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
+      <p style="font-family:'Poppins',sans-serif; font-size:clamp(20px,2.1vw,30px); line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
+      <div style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;">
+        <div style="display:flex; gap:18px; align-items:center;">
+          <span style="font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:#fff;">Bize Ulaşın</span>
+          <span style="font-size:24px; color:#c8a04e;">→</span>
+          <a href="https://wa.me/905434818591" style="font-family:'Poppins',sans-serif; color:#c8a04e; font-size:20px; font-weight:700;">WhatsApp</a>
+        </div>
+      </div>
+      </div>
+      <div style="overflow:hidden; min-width:0; margin-left:120px; width:calc(100% + 180px);">
       <div style="display:flex; gap:24px; width:fit-content; animation:svcMarquee 50s linear infinite;">
         <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
-          <a href="#" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16; flex:0 0 440px;">
+          <a href="#" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16; flex:0 0 500px;">
             <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
             <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
             <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
@@ -93,14 +101,7 @@
           </a>
         </sc-for>
       </div>
-    </div>
-  </section>
-
-  <section style="margin:0 60px 100px; padding:60px; border-radius:28px; background:#171512; display:flex; align-items:center; justify-content:space-between; gap:40px; flex-wrap:wrap;">
-    <h3 style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:30px; text-transform:uppercase; margin:0; color:#fff; max-width:520px; line-height:1.25;">Hayalinizdeki günü <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; text-transform:none;">birlikte</span> tasarlayalım</h3>
-    <div style="display:flex; gap:14px;">
-      <a href="tel:+905434818591" style="padding:14px 28px; background:#c8a04e; color:#171512; font-size:13px; font-weight:600; border-radius:30px;">Bize Ulaşın</a>
-      <a href="https://wa.me/905434818591" style="padding:14px 28px; border:1px solid #4a4640; color:#fff; font-size:13px; font-weight:600; border-radius:30px;">WhatsApp</a>
+      </div>
     </div>
   </section>
 
