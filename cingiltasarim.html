@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="./image-slot.js"></script>
+  <style>
+    html, body { margin: 0; background: #fbf9f5; }
+    body { overflow-x: hidden; }
+    * { box-sizing: border-box; }
+    @keyframes wordGold { 0%, 100% { color: #fff; } 50% { color: #c8a04e; } }
+    @keyframes svcMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    ::selection { background: #c8a04e; color: #fff; }
+    a { color: #c8a04e; text-decoration: none; }
+
+    /* ==========================================================
+       Base rules below reproduce the current desktop/PC layout
+       EXACTLY (same values that used to live inline). Nothing
+       changes at large widths. Only the @media blocks further
+       down alter these for laptop/tablet/mobile viewports.
+       ========================================================== */
+    /* Safari/WebKit sometimes delays repainting a fixed + backdrop-filter
+       element until scrolling stops, so the header's darken/blur transition
+       can look "stuck" while actively scrolling on macOS trackpads even
+       though it works fine with Chrome's mouse-wheel scrolling on PC.
+       Forcing its own compositor layer keeps it repainting continuously. */
+    .site-header { padding: 14px 20px; flex-wrap: wrap; row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; }
+    .site-nav { gap: 36px; flex-wrap: wrap; row-gap: 8px; }
+    .nav-link { font-size: 18px; }
+    .header-cta { padding: 9px 14px; font-size: 12px; }
+
+    .hero-section { padding: 56px 60px 0; }
+    /* Font size is tied to the image container's own width (cqw), not the
+       viewport, so the headline scales together with the photo at every
+       screen size instead of staying pinned to a fixed px value while the
+       image shrinks/grows around it. 5.69cqw reproduces the exact size
+       (118px) the old vw-based clamp produced on a >=2560px PC screen. */
+    .hero-title { padding: 0 40px 50px 60px; font-size: clamp(30px, 5.69cqw, 140px); }
+
+    .about-section { padding: 160px 60px 100px; }
+    .about-grid { grid-template-columns: 1fr 1.5fr; }
+    .about-image { max-width: 600px; margin-left: 180px; }
+    .about-text { margin-left: -40px; }
+
+    .quote-section { padding: 100px 60px; }
+    .quote-heading { white-space: nowrap; }
+
+    .services-section { padding: 180px 0 100px 20px; }
+    .services-grid { grid-template-columns: minmax(620px, 1fr) minmax(0, 1.55fr); }
+    .services-copy { margin-left: -240px; transform: translateY(-70px); }
+    .services-marquee-wrap { margin-left: 120px; width: calc(100% + 180px); }
+    .service-card { flex: 0 0 500px; }
+
+    .contact-section { padding: 90px 60px; }
+    .contact-grid { grid-template-columns: 1fr 1.3fr; }
+    .contact-map { margin-top: -260px; max-width: 85%; }
+
+    .site-footer { padding: 0 60px 40px; }
+    .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+
+    /* ---------- Laptop / MacBook-class screens ----------
+       These are the widths (~1024-1700px CSS px, e.g. a MacBook
+       at 1440x900 or 1512x982) where the desktop version broke:
+       several elements used large fixed-pixel negative margins
+       and transforms (margin-left:-240px, translateY(-70px),
+       margin-top:-260px) and a fixed minmax(620px, ...) grid
+       track that were sized for a very wide (>=1700px) canvas.
+       On a narrower viewport those fixed offsets no longer fit
+       inside their grid track, so content overflowed/overlapped
+       ("kayan" elemanlar). Disabling them below 1700px removes
+       the overflow without touching anything above it. */
+    @media (max-width: 1700px) {
+      .services-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+      .services-copy { margin-left: 0; transform: none; }
+      .services-marquee-wrap { margin-left: 0; width: 100%; }
+      .about-image { margin-left: 0; justify-self: center; }
+      .contact-map { margin-top: 0; }
+    }
+
+    @media (max-width: 1280px) {
+      .hero-section { padding: 44px 36px 0; }
+      .about-section { padding: 110px 36px 70px; }
+      .services-section { padding: 100px 36px 80px; }
+      .contact-section { padding: 70px 36px; }
+      .site-footer { padding: 0 36px 36px; }
+      .quote-section { padding: 70px 36px; }
+    }
+
+    /* ---------- Tablet ---------- */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; row-gap: 40px; }
+      .about-image { max-width: 460px; margin: 0 auto; }
+      .about-text { margin-left: 0; }
+      .services-grid { grid-template-columns: 1fr; row-gap: 50px; }
+      .services-copy { max-width: 100%; }
+      .contact-grid { grid-template-columns: 1fr; row-gap: 36px; }
+      .contact-map { min-height: 380px; max-width: 100%; }
+      .footer-grid { grid-template-columns: 1fr 1fr; row-gap: 32px; }
+      .site-nav { gap: 22px; }
+      .nav-link { font-size: 15px; }
+      .quote-heading { white-space: normal; }
+    }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 640px) {
+      .site-header { padding: 10px 14px; }
+      .brand-tagline { display: none; }
+      .header-cta-label { display: none; }
+      .header-cta { padding: 10px; }
+      .site-nav { gap: 12px; }
+      .nav-link { font-size: 11px; letter-spacing: 0.3px; }
+
+      .hero-section { padding: 24px 16px 0; }
+      .hero-title { padding: 0 20px 28px 24px; }
+      .about-section { padding: 70px 20px 50px; }
+      .about-image { max-width: 100%; }
+      .quote-section { padding: 50px 20px; }
+      .services-section { padding: 70px 20px 60px; }
+      .service-card { flex: 0 0 78vw; }
+      .contact-section { padding: 50px 20px; }
+      .site-footer { padding: 0 20px 28px; }
+      .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
+    }
+  </style>
+</helmet>
+
+<div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
+
+  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" style="width:30px; height:auto;" />
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:28px; color:#c8a04e; line-height:1;">Cingil</div>
+        <div class="brand-tagline" style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
+      </div>
+    </div>
+    <nav class="site-nav" style="display:flex; align-items:center;">
+      <a href="#home" class="nav-link" style="color:{{ navHomeColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">ANA SAYFA</a>
+      <a href="#about" class="nav-link" style="color:{{ navAboutColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HAKKIMIZDA</a>
+      <a href="#services" class="nav-link" style="color:{{ navServicesColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HİZMETLERİMİZ</a>
+      <a href="#iletisim" class="nav-link" style="color:{{ navContactColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">İLETİŞİM</a>
+    </nav>
+    <a href="https://wa.me/905434818591" class="header-cta" style="display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; border-radius:30px; font-weight:600; line-height:1; white-space:nowrap; flex-shrink:0; margin-left:12px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.149-.15.347-.397.52-.596.174-.198.232-.34.347-.567.116-.228.058-.427-.04-.596-.099-.174-.892-2.146-1.223-2.874-.325-.71-.658-.61-.905-.62-.234-.01-.502-.012-.77-.012-.267 0-.7.1-.966.397-.267.297-1.02.995-1.02 2.43 0 1.436 1.02 2.828 1.163 3.023.148.199 1.93 2.938 4.68 4.001 2.75 1.063 2.75.71 3.243.669.492-.043 1.593-.649 1.816-1.276.223-.63.223-1.17.15-1.276-.075-.106-.273-.174-.57-.297z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.98.575 3.826 1.567 5.383L2 22l4.727-1.53A9.94 9.94 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 0 1-4.09-1.117l-.294-.174-2.81.91.919-2.727-.19-.28A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+      <span class="header-cta-label">Bize Ulaş</span>
+    </a>
+  </header>
+
+  <section id="home" class="hero-section">
+    <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; width:85%; margin:0 auto; container-type:inline-size;">
+      <img src="./assets/ana-header.png" alt="Gelin çiçekler arasında" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block;" />
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0.68) 0%, rgba(23,21,18,0) 15%, rgba(23,21,18,0.2) 50%, rgba(23,21,18,0) 55%, rgba(23,21,18,0.75) 100%);"></div>
+      <div style="position:absolute; left:0; right:0; bottom:0; height:55%; -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);"></div>
+      <h2 class="hero-title" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none;">Mutluluğunuzu</span><span style="color:#c8a04e;">BİZ TASARLIYALIM</span></h2>
+    </div>
+  </section>
+
+  <section id="about" class="about-section">
+    <div style="text-align:center; margin-bottom:110px;">
+      <div style="display:inline-block; font-size:clamp(34px,6vw,60px); letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
+    </div>
+    <div class="about-grid" style="display:grid; gap:40px; align-items:start;">
+      <div class="about-image" style="border-radius:24px; overflow:hidden; aspect-ratio:4/5;">
+        <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block;" />
+      </div>
+      <div class="about-text" style="padding-top:0;">
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:clamp(30px,5.5vw,56px); color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
+      <p style="font-size:clamp(17px,2.5vw,39px); line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:clamp(32px,6.2vw,64px); color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section class="quote-section" style="background:#171512;">
+    <h2 lang="tr" class="quote-heading" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
+  </section>
+
+  <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
+    <div class="services-grid" style="display:grid; gap:28px; align-items:center;">
+      <div class="services-copy" style="text-align:left; max-width:960px;">
+      <p style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,3.2vw,46px); line-height:1.2; color:#171512; margin:0 0 60px; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
+      <p style="font-family:'Poppins',sans-serif; font-size:clamp(20px,2.1vw,30px); line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
+      <div style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;">
+        <div style="display:flex; gap:18px; align-items:center;">
+          <span style="font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:#fff;">Bize Ulaşın</span>
+          <span style="font-size:24px; color:#c8a04e;">→</span>
+          <a href="https://wa.me/905434818591" style="font-family:'Poppins',sans-serif; color:#c8a04e; font-size:20px; font-weight:700;">WhatsApp</a>
+        </div>
+      </div>
+      </div>
+      <div class="services-marquee-wrap" style="overflow:hidden; min-width:0;">
+      <div style="display:flex; gap:24px; width:fit-content; animation:svcMarquee 50s linear infinite;">
+        <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
+          <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16;">
+            <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
+            <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
+            <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:20px 22px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px;">
+              <h3 style="font-family:'Poppins',sans-serif; font-weight:600; font-size:17px; text-transform:uppercase; letter-spacing:0.5px; color:#fff; margin:0;">{{ s.title }}</h3>
+              <span style="font-size:12px; color:#c8a04e; white-space:nowrap;">→</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="iletisim" class="contact-section" style="background:#171512; color:#fff;">
+    <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,4.5vw,48px); line-height:1.2; text-transform:uppercase; margin:0 0 60px; max-width:720px;">Hayalinizi <span style="font-weight:700; color:#fff;">birlikte</span><br />konuşalım.</h2>
+    <div class="contact-grid" style="display:grid; gap:60px; border-top:1px solid #322e28; padding-top:50px;">
+      <div>
+        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">KONUM</div>
+        <p style="font-size:16px; line-height:1.6; margin:0 0 34px;">Cumhuriyet Mahallesi<br />Yavuz Sultan Selim Bulvarı No: 167/A</p>
+        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">İLETİŞİM KANALLARI</div>
+        <p style="font-size:16px; margin:0 0 6px;">muzeyyenkasimoglu@hotmail.com</p>
+        <p style="font-size:18px; font-weight:600; margin:0 0 34px;">0543 481 85 91</p>
+        <div>
+          <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">INSTAGRAM</div>
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#fff; font-size:16px;">@cingil_tasarim_organizasyon</a>
+        </div>
+      </div>
+      <div class="contact-map" style="border-radius:20px; overflow:hidden; align-self:stretch;">
+        <iframe src="https://www.google.com/maps?q=Cingil+Tasar%C4%B1m+Organizasyon,+Yavuz+Selim+Blv,+Ortahisar%2FTrabzon&z=17&output=embed" width="100%" height="100%" style="border:0; display:block; filter:grayscale(0.15) contrast(1.05);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-grid" style="display:grid; gap:50px; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">Cingil Tasarım</div>
+        <p style="font-size:13px; line-height:1.7; color:#7a7669; font-weight:300; max-width:300px; margin:0;">Düğün • Nişan • Kına • Özel Etkinlik Organizasyonları</p>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Menü</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <a href="#" style="color:#7a7669;">Ana Sayfa</a>
+          <a href="#services" style="color:#7a7669;">Hizmetlerimiz</a>
+          <a href="#" style="color:#7a7669;">Hakkımızda</a>
+          <a href="#" style="color:#7a7669;">İletişim</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Sosyal Medya</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#7a7669;">Instagram</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">İletişim</div>
+        <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
+          <span>Cumhuriyet Mahallesi, Yavuz Sultan Selim Bulvarı No: 167/A</span>
+          <a href="tel:+905434818591" style="color:#7a7669;">0543 481 85 91</a>
+          <a href="https://wa.me/905434818591" style="color:#7a7669;">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #ece7dc; padding-top:22px; font-size:12px; color:#a29e92; text-align:center;">© 2026 Cingil Tasarım Organizasyon. Tüm Hakları Saklıdır.</div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { active: "home", scrolled: false };
+
+  componentDidMount() {
+    this.sectionIds = ["home", "about", "services", "iletisim"];
+    this.onScroll = () => {
+      const mid = window.innerHeight * 0.35;
+      let current = "home";
+      for (const id of this.sectionIds) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= mid) current = id;
+      }
+      const scrolled = window.scrollY > 10;
+      if (current !== this.state.active || scrolled !== this.state.scrolled) {
+        this.setState({ active: current, scrolled });
+      }
+    };
+    window.addEventListener("scroll", this.onScroll, { passive: true });
+    this.onScroll();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll);
+  }
+
+  renderVals() {
+    const gold = "#c8a04e";
+    const dark = this.state.scrolled ? "#f4ecdf" : "#171512";
+    const navHomeColor = this.state.active === "home" ? gold : dark;
+    const navServicesColor = this.state.active === "services" ? gold : dark;
+    const navAboutColor = this.state.active === "about" ? gold : dark;
+    const navContactColor = this.state.active === "iletisim" ? gold : dark;
+    const headerBg = this.state.scrolled ? "rgba(23,21,18,0.55)" : "#fbf9f5";
+    const headerBorder = this.state.scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid #ece7dc";
+    const headerBlur = this.state.scrolled ? "blur(16px)" : "none";
+    const taglineColor = this.state.scrolled ? "#f4ecdf" : "#171512";
+    const raw = [
+      ["Organizasyon", "Konseptten uygulamaya, günün her detayını sizin için baştan sona planlıyoruz."],
+      ["İsteme, Söz & Nişan", "Ailelerin buluştuğu bu özel günü ince detaylarla süslüyoruz."],
+      ["Kına Salonu", "Renkli ve enerjik kına gecelerini unutulmaz sahnelere taşıyoruz."],
+      ["Çiçek Tasarımı", "Temanıza uygun buket ve çiçek düzenlemeleriyle mekanı süslüyoruz."],
+      ["Toplantı, Seminer & Etkinlik", "Kurumsal etkinliklerinizi profesyonel bir organizasyonla yönetiyoruz."],
+      ["Açılış Organizasyonu", "İşletmenizin açılışını etkileyici bir davetle hayata geçiriyoruz."],
+      ["Mezuniyet", "Bu gururlu günü arkadaşlarla dolu şık bir kutlamaya dönüştürüyoruz."],
+      ["Doğum Günü", "Küçük veya büyük, her doğum gününü keyifli ve akılda kalıcı bir kutlamaya dönüştürüyoruz."],
+      ["Yemek Etkinlik", "Lezzet ve estetiği bir araya getiren özel yemek organizasyonları kuruyoruz."],
+      ["DJ, Orkestra & Ses Hizmetleri", "Doğru müzik ve ses sistemiyle etkinliğinizin atmosferini yükseltiyoruz."]
+    ];
+    const services = raw.map((r, i) => ({
+      num: String(i + 1).padStart(2, "0"),
+      title: r[0],
+      desc: r[1],
+      imgId: "svc-" + (i + 1),
+      colSpan: (i === 0 || i === 5) ? 2 : 1,
+      rowSpan: (i === 0 || i === 5) ? 2 : 1
+    }));
+    const features = [
+      ["01", "Kusursuz Planlama", "Her saniyeyi bir sanat eseri gibi kurguluyor, sürprizlere yer bırakmıyoruz."],
+      ["02", "Sinematik Bakış", "Sadece çekim yapmıyor, hikayenizi sinema diliyle tüm dünyaya anlatıyoruz."],
+      ["03", "Dijital Mimari", "Markanızı dijitalin en prestijli noktasına taşıyan modern çözümler üretiyoruz."]
+    ].map(f => ({ num: f[0], title: f[1], desc: f[2] }));
+    const stats = [
+      ["5.000+", "Tamamlanan Proje"],
+      ["5.000+", "Mutlu Çift & Marka"],
+      ["15+", "Yıllık Deneyim"],
+      ["25+", "Yaratıcı Ekip"]
+    ].map(s => ({ num: s[0], label: s[1] }));
+    const servicesLoop = services.concat(services.map(s => ({ ...s, imgId: s.imgId + "-2" })));
+    return { services, servicesLoop, features, stats, navHomeColor, navServicesColor, navAboutColor, navContactColor, headerBg, headerBorder, headerBlur, taglineColor };
+  }
+}
+</script>
+</body>
+</html>
