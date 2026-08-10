@@ -45,10 +45,25 @@
        (118px) the old vw-based clamp produced on a >=2560px PC screen. */
     .hero-title { padding: 0 40px 50px 60px; font-size: clamp(30px, 5.69cqw, 140px); }
 
-    .about-section { padding: 160px 60px 100px; }
-    .about-grid { grid-template-columns: 1fr 1.5fr; }
-    .about-image { max-width: 600px; margin-left: 180px; }
-    .about-text { margin-left: -40px; }
+    /* Same technique as .hero-title: every size below is expressed as a
+       percentage of the section's own content width (cqw) instead of the
+       viewport (vw) or a fixed px. Because they all share one reference
+       (container-type:inline-size on .about-section), the photo, its
+       offset, the text offset and the headline/paragraph sizes all shrink
+       and grow together in lockstep at any screen width, reproducing the
+       exact composition seen on a >=2560px PC screen just scaled down —
+       instead of each piece drifting at its own rate and the layout
+       overflowing/misaligning on narrower screens. Each cqw figure is
+       calibrated to equal today's fixed px value at the 2440px content
+       width a 2560px-wide PC screen produces (e.g. 24.59cqw = 600px/2440px). */
+    .about-section { padding: 160px 60px 100px; container-type: inline-size; }
+    .about-heading { font-size: clamp(28px, 2.459cqw, 60px); }
+    .about-grid { grid-template-columns: 1fr 1.5fr; gap: clamp(16px, 1.639cqw, 40px); }
+    .about-image { max-width: clamp(200px, 24.59cqw, 600px); margin-left: clamp(0px, 7.377cqw, 180px); }
+    .about-text { margin-left: clamp(-40px, -1.639cqw, 0px); }
+    .about-quote-1 { font-size: clamp(24px, 2.295cqw, 56px); }
+    .about-body { font-size: clamp(15px, 1.598cqw, 39px); }
+    .about-quote-2 { font-size: clamp(26px, 2.623cqw, 64px); }
 
     .quote-section { padding: 100px 60px; }
     .quote-heading { white-space: nowrap; }
@@ -76,12 +91,14 @@
        On a narrower viewport those fixed offsets no longer fit
        inside their grid track, so content overflowed/overlapped
        ("kayan" elemanlar). Disabling them below 1700px removes
-       the overflow without touching anything above it. */
+       the overflow without touching anything above it. (.about-image
+       no longer needs an entry here — it's cqw-based now, see
+       .about-section above, so it already scales correctly at every
+       width without a breakpoint.) */
     @media (max-width: 1700px) {
       .services-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
       .services-copy { margin-left: 0; transform: none; }
       .services-marquee-wrap { margin-left: 0; width: 100%; }
-      .about-image { margin-left: 0; justify-self: center; }
       .contact-map { margin-top: 0; }
     }
 
@@ -96,9 +113,6 @@
 
     /* ---------- Tablet ---------- */
     @media (max-width: 1024px) {
-      .about-grid { grid-template-columns: 1fr; row-gap: 40px; }
-      .about-image { max-width: 460px; margin: 0 auto; }
-      .about-text { margin-left: 0; }
       .services-grid { grid-template-columns: 1fr; row-gap: 50px; }
       .services-copy { max-width: 100%; }
       .contact-grid { grid-template-columns: 1fr; row-gap: 36px; }
@@ -121,7 +135,6 @@
       .hero-section { padding: 24px 16px 0; }
       .hero-title { padding: 0 20px 28px 24px; }
       .about-section { padding: 70px 20px 50px; }
-      .about-image { max-width: 100%; }
       .quote-section { padding: 50px 20px; }
       .services-section { padding: 70px 20px 60px; }
       .service-card { flex: 0 0 78vw; }
@@ -165,16 +178,16 @@
 
   <section id="about" class="about-section">
     <div style="text-align:center; margin-bottom:110px;">
-      <div style="display:inline-block; font-size:clamp(34px,6vw,60px); letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
+      <div class="about-heading" style="display:inline-block; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
     </div>
-    <div class="about-grid" style="display:grid; gap:40px; align-items:start;">
+    <div class="about-grid" style="display:grid; align-items:start;">
       <div class="about-image" style="border-radius:24px; overflow:hidden; aspect-ratio:4/5;">
         <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block;" />
       </div>
       <div class="about-text" style="padding-top:0;">
-      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:clamp(30px,5.5vw,56px); color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
-      <p style="font-size:clamp(17px,2.5vw,39px); line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
-      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:clamp(32px,6.2vw,64px); color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
+      <p class="about-quote-1" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
+      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
+      <p class="about-quote-2" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
       </div>
     </div>
     </div>
