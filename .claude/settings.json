@@ -17,7 +17,11 @@
       "Bash(osascript -e 'tell application \"Safari\" to tell front document to do JavaScript \"location.reload\\(\\)\"')",
       "Bash(npx --yes playwright install webkit)",
       "Bash(node webkit_scroll_test.mjs)",
-      "Bash(rm -f \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/check*.mjs \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/shots*.mjs 2>/dev/null; echo cleaned)"
+      "Bash(rm -f \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/check*.mjs \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/shots*.mjs 2>/dev/null; echo cleaned)",
+      "Bash(node verify_services.mjs)",
+      "Bash(rm -f \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/measure_services*.mjs \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/verify_wide_sweep.mjs \"/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad\"/isolate_overflow.mjs 2>/dev/null; echo cleaned)",
+      "Bash(node measure_height.mjs)",
+      "Bash(node measure_copy_height.mjs)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-ibrahimenez-Downloads-cingil-tasarim-web-main/b4ee0a4c-80a1-4682-a229-ff9dca680808/scratchpad"

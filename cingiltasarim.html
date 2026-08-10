@@ -68,11 +68,29 @@
     .quote-section { padding: 100px 60px; }
     .quote-heading { white-space: nowrap; }
 
-    .services-section { padding: 180px 0 100px 20px; }
-    .services-grid { grid-template-columns: minmax(620px, 1fr) minmax(0, 1.55fr); }
-    .services-copy { margin-left: -240px; transform: translateY(-70px); }
-    .services-marquee-wrap { margin-left: 120px; width: calc(100% + 180px); }
-    .service-card { flex: 0 0 500px; }
+    /* Same technique as .hero-title/.about-section: every size below is a
+       percentage of the section's own content width (cqw), calibrated to
+       equal today's fixed px value at the 1580px content width the
+       max-width:1600px section produces. The grid columns, the marquee's
+       bleed width and the card size share that one reference, so they
+       scale together at any screen width instead of the old fixed-px
+       offsets overflowing their track on narrower screens.
+       .services-copy's -240px bleed is the one exception left as a plain
+       (non-cqw) value below, disabled under 1700px: it only looks right
+       because a >=1700px viewport has spare margin outside the
+       max-width:1600px section for it to bleed into (the section is
+       centered with room on both sides). Below that width the section
+       fills edge-to-edge with none of that spare margin, so scaling the
+       same offset down would still push the text clean off the left edge
+       of the screen instead of shrinking gracefully — there's no "smaller
+       runway" for it to scale into, so it's turned off instead. */
+    .services-section { padding: 180px 0 100px 20px; container-type: inline-size; }
+    .services-grid { grid-template-columns: minmax(0, 39.24cqw) minmax(0, 58.987cqw); gap: 1.772cqw; }
+    .services-copy { margin-left: -240px; transform: translateY(-70px); max-width: clamp(300px, 60.76cqw, 960px); }
+    .services-title { font-size: clamp(24px, 2.911cqw, 46px); margin-bottom: 60px; }
+    .services-desc { font-size: clamp(16px, 1.899cqw, 30px); }
+    .services-marquee-wrap { margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
+    .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); }
 
     .contact-section { padding: 90px 60px; }
     .contact-grid { grid-template-columns: 1fr 1.3fr; }
@@ -81,25 +99,51 @@
     .site-footer { padding: 0 60px 40px; }
     .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
 
+    /* On a real >=2560px PC monitor the services section comfortably fits
+       one screen (~1170px tall in a ~1440px viewport). Scaled purely
+       proportionally to width, the same section renders ~1280px tall on
+       a 1440x900 MacBook — taller than the MacBook's own 900px viewport,
+       so the section no longer fits in one view there even though its
+       *proportions* are correct. This tier makes the services section
+       intentionally smaller (not just proportionally smaller) on any
+       screen under 2500px so it comfortably fits a laptop-height
+       viewport; it never applies at/above 2560px so the PC view is
+       untouched. */
+    @media (max-width: 2500px) {
+      .services-section { padding: 90px 0 70px 24px; }
+      .service-card { flex: 0 0 clamp(180px, 23cqw, 340px); }
+      .services-title { font-size: clamp(20px, 2.2cqw, 34px); margin-bottom: 30px; }
+      .services-desc { font-size: clamp(14px, 1.2cqw, 18px); }
+    }
+
     /* ---------- Laptop / MacBook-class screens ----------
        These are the widths (~1024-1700px CSS px, e.g. a MacBook
        at 1440x900 or 1512x982) where the desktop version broke:
-       several elements used large fixed-pixel negative margins
-       and transforms (margin-left:-240px, translateY(-70px),
-       margin-top:-260px) and a fixed minmax(620px, ...) grid
-       track that were sized for a very wide (>=1700px) canvas.
-       On a narrower viewport those fixed offsets no longer fit
-       inside their grid track, so content overflowed/overlapped
-       ("kayan" elemanlar). Disabling them below 1700px removes
-       the overflow without touching anything above it. (.about-image
-       no longer needs an entry here — it's cqw-based now, see
-       .about-section above, so it already scales correctly at every
-       width without a breakpoint.) */
+       .contact-map used a large fixed-pixel negative margin-top
+       (-260px) sized for a very wide canvas, which no longer fits
+       once the row is shorter on a narrower viewport and overlapped
+       the text next to it ("kayan" elemanlar), and .services-copy's
+       edge-bleed offset (see the comment above .services-section)
+       only has room to exist above this width. Disabling both below
+       1700px removes the overlap/clipping without touching anything
+       above it. (.about-image and the rest of .services-grid /
+       .services-marquee-wrap no longer need an entry here — they're
+       cqw-based now, see .about-section / .services-section above, so
+       they already scale correctly at every width without a
+       breakpoint.) */
     @media (max-width: 1700px) {
-      .services-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
-      .services-copy { margin-left: 0; transform: none; }
-      .services-marquee-wrap { margin-left: 0; width: 100%; }
       .contact-map { margin-top: 0; }
+      .services-copy { margin-left: 0; transform: none; }
+      /* Without the bleed, .services-copy is confined to column 1. At the
+         PC-matched 39.24cqw share that column was only ~556px at 1440px
+         wide — a hair narrower than the ~581px the "Cingil Tasarım
+         Organizasyon Olarak" heading needs on one line, so it wrapped to
+         two lines even though it never wraps on the >=2560px reference.
+         Widening column 1's share (and shrinking column 2's by the same
+         amount) gives it enough room to stay on one line at every width
+         in this tier — the ratio itself scales with cqw same as before,
+         so this holds from 1700px down through the smallest widths here. */
+      .services-grid { grid-template-columns: minmax(0, 44cqw) minmax(0, 54.228cqw); }
     }
 
     @media (max-width: 1280px) {
@@ -113,8 +157,6 @@
 
     /* ---------- Tablet ---------- */
     @media (max-width: 1024px) {
-      .services-grid { grid-template-columns: 1fr; row-gap: 50px; }
-      .services-copy { max-width: 100%; }
       .contact-grid { grid-template-columns: 1fr; row-gap: 36px; }
       .contact-map { min-height: 380px; max-width: 100%; }
       .footer-grid { grid-template-columns: 1fr 1fr; row-gap: 32px; }
@@ -198,10 +240,10 @@
   </section>
 
   <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
-    <div class="services-grid" style="display:grid; gap:28px; align-items:center;">
-      <div class="services-copy" style="text-align:left; max-width:960px;">
-      <p style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,3.2vw,46px); line-height:1.2; color:#171512; margin:0 0 60px; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
-      <p style="font-family:'Poppins',sans-serif; font-size:clamp(20px,2.1vw,30px); line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
+    <div class="services-grid" style="display:grid; align-items:center;">
+      <div class="services-copy" style="text-align:left;">
+      <p class="services-title" style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.2; color:#171512; margin-top:0; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
+      <p class="services-desc" style="font-family:'Poppins',sans-serif; line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
       <div style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;">
         <div style="display:flex; gap:18px; align-items:center;">
           <span style="font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:#fff;">Bize Ulaşın</span>
@@ -211,7 +253,7 @@
       </div>
       </div>
       <div class="services-marquee-wrap" style="overflow:hidden; min-width:0;">
-      <div style="display:flex; gap:24px; width:fit-content; animation:svcMarquee 50s linear infinite;">
+      <div style="display:flex; gap:1.519cqw; width:fit-content; animation:svcMarquee 50s linear infinite;">
         <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
           <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16;">
             <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
