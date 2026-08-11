@@ -13,100 +13,255 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="./image-slot.js"></script>
   <style>
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: #fbf9f5; }
+    html, body { margin: 0; background: #fbf9f5; }
+    body { overflow-x: hidden; }
     * { box-sizing: border-box; }
     @keyframes wordGold { 0%, 100% { color: #fff; } 50% { color: #c8a04e; } }
     @keyframes svcMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    @keyframes heroFadeUp { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes heroImgIn { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: scale(1); } }
-    [data-reveal] { opacity: 0; transition: opacity .55s ease-out, transform .55s cubic-bezier(0.16,1,0.3,1); }
-    [data-reveal="up"] { transform: translateY(22px); }
-    [data-reveal="left"] { transform: translateX(-28px); }
-    [data-reveal="right"] { transform: translateX(28px); }
-    [data-reveal="zoom"] { transform: scale(0.95); }
-    [data-reveal="fade"] { transform: none; }
-    [data-reveal].is-visible { opacity: 1; transform: none; }
     ::selection { background: #c8a04e; color: #fff; }
     a { color: #c8a04e; text-decoration: none; }
+
+    /* ==========================================================
+       Base rules below reproduce the current desktop/PC layout
+       EXACTLY (same values that used to live inline). Nothing
+       changes at large widths. Only the @media blocks further
+       down alter these for laptop/tablet/mobile viewports.
+       ========================================================== */
+    /* Safari/WebKit sometimes delays repainting a fixed + backdrop-filter
+       element until scrolling stops, so the header's darken/blur transition
+       can look "stuck" while actively scrolling on macOS trackpads even
+       though it works fine with Chrome's mouse-wheel scrolling on PC.
+       Forcing its own compositor layer keeps it repainting continuously. */
+    .site-header { padding: 14px 20px; flex-wrap: wrap; row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; }
+    .site-nav { gap: 36px; flex-wrap: wrap; row-gap: 8px; }
+    .nav-link { font-size: 18px; }
+    .header-cta { padding: 9px 14px; font-size: 12px; }
+
+    .hero-section { padding: 56px 60px 0; }
+    /* Font size is tied to the image container's own width (cqw), not the
+       viewport, so the headline scales together with the photo at every
+       screen size instead of staying pinned to a fixed px value while the
+       image shrinks/grows around it. 5.69cqw reproduces the exact size
+       (118px) the old vw-based clamp produced on a >=2560px PC screen. */
+    .hero-title { padding: 0 40px 50px 60px; font-size: clamp(30px, 5.69cqw, 140px); }
+
+    /* Same technique as .hero-title: every size below is expressed as a
+       percentage of the section's own content width (cqw) instead of the
+       viewport (vw) or a fixed px. Because they all share one reference
+       (container-type:inline-size on .about-section), the photo, its
+       offset, the text offset and the headline/paragraph sizes all shrink
+       and grow together in lockstep at any screen width, reproducing the
+       exact composition seen on a >=2560px PC screen just scaled down —
+       instead of each piece drifting at its own rate and the layout
+       overflowing/misaligning on narrower screens. Each cqw figure is
+       calibrated to equal today's fixed px value at the 2440px content
+       width a 2560px-wide PC screen produces (e.g. 24.59cqw = 600px/2440px). */
+    .about-section { padding: 160px 60px 100px; container-type: inline-size; }
+    .about-heading { font-size: clamp(28px, 2.459cqw, 60px); }
+    .about-grid { grid-template-columns: 1fr 1.5fr; gap: clamp(16px, 1.639cqw, 40px); }
+    .about-image { max-width: clamp(200px, 24.59cqw, 600px); margin-left: clamp(0px, 7.377cqw, 180px); }
+    .about-text { margin-left: clamp(-40px, -1.639cqw, 0px); }
+    .about-quote-1 { font-size: clamp(24px, 2.295cqw, 56px); }
+    .about-body { font-size: clamp(15px, 1.598cqw, 39px); }
+    .about-quote-2 { font-size: clamp(26px, 2.623cqw, 64px); }
+
+    .quote-section { padding: 100px 60px; }
+    .quote-heading { white-space: nowrap; }
+
+    /* Same technique as .hero-title/.about-section: every size below is a
+       percentage of the section's own content width (cqw), calibrated to
+       equal today's fixed px value at the 1580px content width the
+       max-width:1600px section produces. The grid columns, the marquee's
+       bleed width and the card size share that one reference, so they
+       scale together at any screen width instead of the old fixed-px
+       offsets overflowing their track on narrower screens.
+       .services-copy's -240px bleed is the one exception left as a plain
+       (non-cqw) value below, disabled under 1700px: it only looks right
+       because a >=1700px viewport has spare margin outside the
+       max-width:1600px section for it to bleed into (the section is
+       centered with room on both sides). Below that width the section
+       fills edge-to-edge with none of that spare margin, so scaling the
+       same offset down would still push the text clean off the left edge
+       of the screen instead of shrinking gracefully — there's no "smaller
+       runway" for it to scale into, so it's turned off instead. */
+    .services-section { padding: 180px 0 100px 20px; container-type: inline-size; }
+    .services-grid { grid-template-columns: minmax(0, 39.24cqw) minmax(0, 58.987cqw); gap: 1.772cqw; }
+    .services-copy { margin-left: -240px; transform: translateY(-70px); max-width: clamp(300px, 60.76cqw, 960px); }
+    .services-title { font-size: clamp(24px, 2.911cqw, 46px); margin-bottom: 60px; }
+    .services-desc { font-size: clamp(16px, 1.899cqw, 30px); }
+    .services-marquee-wrap { margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
+    .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); }
+
+    .contact-section { padding: 90px 60px; }
+    .contact-grid { grid-template-columns: 1fr 1.3fr; }
+    .contact-map { margin-top: -260px; max-width: 85%; }
+
+    .site-footer { padding: 0 60px 40px; }
+    .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+
+    /* On a real >=2560px PC monitor the services section comfortably fits
+       one screen (~1170px tall in a ~1440px viewport). Scaled purely
+       proportionally to width, the same section renders ~1280px tall on
+       a 1440x900 MacBook — taller than the MacBook's own 900px viewport,
+       so the section no longer fits in one view there even though its
+       *proportions* are correct. This tier makes the services section
+       intentionally smaller (not just proportionally smaller) on any
+       screen under 2500px so it comfortably fits a laptop-height
+       viewport; it never applies at/above 2560px so the PC view is
+       untouched. */
+    @media (max-width: 2500px) {
+      .services-section { padding: 90px 0 70px 24px; }
+      .service-card { flex: 0 0 clamp(180px, 23cqw, 340px); }
+      .services-title { font-size: clamp(20px, 2.2cqw, 34px); margin-bottom: 30px; }
+      .services-desc { font-size: clamp(14px, 1.2cqw, 18px); }
+    }
+
+    /* ---------- Laptop / MacBook-class screens ----------
+       These are the widths (~1024-1700px CSS px, e.g. a MacBook
+       at 1440x900 or 1512x982) where the desktop version broke:
+       .contact-map used a large fixed-pixel negative margin-top
+       (-260px) sized for a very wide canvas, which no longer fits
+       once the row is shorter on a narrower viewport and overlapped
+       the text next to it ("kayan" elemanlar), and .services-copy's
+       edge-bleed offset (see the comment above .services-section)
+       only has room to exist above this width. Disabling both below
+       1700px removes the overlap/clipping without touching anything
+       above it. (.about-image and the rest of .services-grid /
+       .services-marquee-wrap no longer need an entry here — they're
+       cqw-based now, see .about-section / .services-section above, so
+       they already scale correctly at every width without a
+       breakpoint.) */
+    @media (max-width: 1700px) {
+      .contact-map { margin-top: 0; }
+      .services-copy { margin-left: 0; transform: none; }
+      /* Without the bleed, .services-copy is confined to column 1. At the
+         PC-matched 39.24cqw share that column was only ~556px at 1440px
+         wide — a hair narrower than the ~581px the "Cingil Tasarım
+         Organizasyon Olarak" heading needs on one line, so it wrapped to
+         two lines even though it never wraps on the >=2560px reference.
+         Widening column 1's share (and shrinking column 2's by the same
+         amount) gives it enough room to stay on one line at every width
+         in this tier — the ratio itself scales with cqw same as before,
+         so this holds from 1700px down through the smallest widths here. */
+      .services-grid { grid-template-columns: minmax(0, 44cqw) minmax(0, 54.228cqw); }
+    }
+
+    @media (max-width: 1280px) {
+      .hero-section { padding: 44px 36px 0; }
+      .about-section { padding: 110px 36px 70px; }
+      .services-section { padding: 100px 36px 80px; }
+      .contact-section { padding: 70px 36px; }
+      .site-footer { padding: 0 36px 36px; }
+      .quote-section { padding: 70px 36px; }
+    }
+
+    /* ---------- Tablet ---------- */
+    @media (max-width: 1024px) {
+      .contact-grid { grid-template-columns: 1fr; row-gap: 36px; }
+      .contact-map { min-height: 380px; max-width: 100%; }
+      .footer-grid { grid-template-columns: 1fr 1fr; row-gap: 32px; }
+      .site-nav { gap: 22px; }
+      .nav-link { font-size: 15px; }
+      .quote-heading { white-space: normal; }
+    }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 640px) {
+      .site-header { padding: 10px 14px; }
+      .brand-tagline { display: none; }
+      .header-cta-label { display: none; }
+      .header-cta { padding: 10px; }
+      .site-nav { gap: 12px; }
+      .nav-link { font-size: 11px; letter-spacing: 0.3px; }
+
+      .hero-section { padding: 24px 16px 0; }
+      .hero-title { padding: 0 20px 28px 24px; }
+      .about-section { padding: 70px 20px 50px; }
+      .quote-section { padding: 50px 20px; }
+      .services-section { padding: 70px 20px 60px; }
+      .service-card { flex: 0 0 78vw; }
+      .contact-section { padding: 50px 20px; }
+      .site-footer { padding: 0 20px 28px; }
+      .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
+    }
   </style>
 </helmet>
 
 <div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
 
-  <header style="position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }}; transition:background .45s ease, backdrop-filter .45s ease, border-color .45s ease;">
+  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
     <div style="display:flex; align-items:center; gap:10px;">
-      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" style="width:30px; height:auto; transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);" style-hover="transform:scale(1.1) rotate(-4deg);" />
+      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" style="width:30px; height:auto;" />
       <div>
         <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:28px; color:#c8a04e; line-height:1;">Cingil</div>
-        <div style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap; transition:color .4s ease;">TASARIM ORGANİZASYON</div>
+        <div class="brand-tagline" style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
       </div>
     </div>
-    <nav style="display:flex; gap:36px; align-items:center;">
-      <a href="#home" style="color:{{ navHomeColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap; transition:color .3s ease, letter-spacing .3s ease;" style-hover="color:#c8a04e; letter-spacing:1px;">ANA SAYFA</a>
-      <a href="#about" style="color:{{ navAboutColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap; transition:color .3s ease, letter-spacing .3s ease;" style-hover="color:#c8a04e; letter-spacing:1px;">HAKKIMIZDA</a>
-      <a href="#services" style="color:{{ navServicesColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap; transition:color .3s ease, letter-spacing .3s ease;" style-hover="color:#c8a04e; letter-spacing:1px;">HİZMETLERİMİZ</a>
-      <a href="#iletisim" style="color:{{ navContactColor }}; font-size:18px; font-weight:800; letter-spacing:0.5px; white-space:nowrap; transition:color .3s ease, letter-spacing .3s ease;" style-hover="color:#c8a04e; letter-spacing:1px;">İLETİŞİM</a>
+    <nav class="site-nav" style="display:flex; align-items:center;">
+      <a href="#home" class="nav-link" style="color:{{ navHomeColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">ANA SAYFA</a>
+      <a href="#about" class="nav-link" style="color:{{ navAboutColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HAKKIMIZDA</a>
+      <a href="#services" class="nav-link" style="color:{{ navServicesColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">HİZMETLERİMİZ</a>
+      <a href="#iletisim" class="nav-link" style="color:{{ navContactColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;">İLETİŞİM</a>
     </nav>
-    <a href="https://wa.me/905434818591" style="display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; padding:9px 14px; border-radius:30px; font-size:12px; font-weight:600; line-height:1; white-space:nowrap; flex-shrink:0; margin-left:12px; transition:transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease;" style-hover="transform:translateY(-2px) scale(1.04); box-shadow:0 10px 22px rgba(37,211,102,0.4);">
+    <a href="https://wa.me/905434818591" class="header-cta" style="display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; border-radius:30px; font-weight:600; line-height:1; white-space:nowrap; flex-shrink:0; margin-left:12px;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.149-.15.347-.397.52-.596.174-.198.232-.34.347-.567.116-.228.058-.427-.04-.596-.099-.174-.892-2.146-1.223-2.874-.325-.71-.658-.61-.905-.62-.234-.01-.502-.012-.77-.012-.267 0-.7.1-.966.397-.267.297-1.02.995-1.02 2.43 0 1.436 1.02 2.828 1.163 3.023.148.199 1.93 2.938 4.68 4.001 2.75 1.063 2.75.71 3.243.669.492-.043 1.593-.649 1.816-1.276.223-.63.223-1.17.15-1.276-.075-.106-.273-.174-.57-.297z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.98.575 3.826 1.567 5.383L2 22l4.727-1.53A9.94 9.94 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 0 1-4.09-1.117l-.294-.174-2.81.91.919-2.727-.19-.28A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
-      <span>Bize Ulaş</span>
+      <span class="header-cta-label">Bize Ulaş</span>
     </a>
   </header>
 
-  <section id="home" style="padding:56px 60px 0;">
-    <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; width:85%; margin:0 auto; animation:heroImgIn 1.3s cubic-bezier(0.16,1,0.3,1) both;">
-      <img src="./assets/ana-header.png" alt="Gelin çiçekler arasında" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block; transition:transform 1.2s cubic-bezier(0.16,1,0.3,1);" style-hover="transform:scale(1.05);" />
+  <section id="home" class="hero-section">
+    <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; width:85%; margin:0 auto; container-type:inline-size;">
+      <img src="./assets/ana-header.png" alt="Gelin çiçekler arasında" style="width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block;" />
       <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0.68) 0%, rgba(23,21,18,0) 15%, rgba(23,21,18,0.2) 50%, rgba(23,21,18,0) 55%, rgba(23,21,18,0.75) 100%);"></div>
       <div style="position:absolute; left:0; right:0; bottom:0; height:55%; -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);"></div>
-      <h2 style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; padding:0 40px 50px 60px; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(52px,8.8vw,118px); line-height:1.15; text-transform:uppercase; color:#fff; overflow:hidden;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .3s both;">Mutluluğunuzu</span><span style="color:#c8a04e; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .5s both;">BİZ TASARLIYALIM</span></h2>
+      <h2 class="hero-title" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none;">Mutluluğunuzu</span><span style="color:#c8a04e;">BİZ TASARLIYALIM</span></h2>
     </div>
   </section>
 
-  <section id="about" style="padding:160px 60px 100px;">
+  <section id="about" class="about-section">
     <div style="text-align:center; margin-bottom:110px;">
-      <div style="display:inline-block; font-size:60px; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
+      <div class="about-heading" style="display:inline-block; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1.5fr; gap:40px; align-items:start;">
-      <div data-reveal="zoom" style="border-radius:24px; overflow:hidden; aspect-ratio:4/5; max-width:600px; margin-left:180px;">
-        <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block; transition:transform .8s cubic-bezier(0.16,1,0.3,1);" style-hover="transform:scale(1.06);" />
+    <div class="about-grid" style="display:grid; align-items:start;">
+      <div class="about-image" style="border-radius:24px; overflow:hidden; aspect-ratio:4/5;">
+        <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block;" />
       </div>
-      <div data-reveal="fade" style="padding-top:0; margin-left:-40px; transition-delay:.1s;">
-      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:56px; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
-      <p style="font-size:clamp(17px,2.5vw,39px); line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
-      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:64px; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
+      <div class="about-text" style="padding-top:0;">
+      <p class="about-quote-1" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
+      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
+      <p class="about-quote-2" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
       </div>
     </div>
     </div>
   </section>
 
-  <section style="background:#171512; padding:100px 60px;">
-    <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; white-space:nowrap; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
+  <section class="quote-section" style="background:#171512;">
+    <h2 lang="tr" class="quote-heading" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
   </section>
 
-  <section id="services" style="padding:180px 0 100px 20px; max-width:1600px; margin:0 auto;">
-    <div style="display:grid; grid-template-columns:minmax(620px, 1fr) minmax(0, 1.55fr); gap:28px; align-items:center;">
-      <div data-reveal="left" style="text-align:left; max-width:960px; margin-left:-240px; transform:translateY(-70px);">
-      <p style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,3.2vw,46px); line-height:1.2; color:#171512; margin:0 0 60px; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
-      <p style="font-family:'Poppins',sans-serif; font-size:clamp(20px,2.1vw,30px); line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
-      <div style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center; transition:transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease;" style-hover="transform:translateY(-4px); box-shadow:0 24px 54px rgba(23,21,18,0.3);">
+  <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
+    <div class="services-grid" style="display:grid; align-items:center;">
+      <div class="services-copy" style="text-align:left;">
+      <p class="services-title" style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.2; color:#171512; margin-top:0; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
+      <p class="services-desc" style="font-family:'Poppins',sans-serif; line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
+      <div style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;">
         <div style="display:flex; gap:18px; align-items:center;">
           <span style="font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:#fff;">Bize Ulaşın</span>
-          <span style="font-size:24px; color:#c8a04e; display:inline-block; transition:transform .35s ease;">→</span>
+          <span style="font-size:24px; color:#c8a04e;">→</span>
           <a href="https://wa.me/905434818591" style="font-family:'Poppins',sans-serif; color:#c8a04e; font-size:20px; font-weight:700;">WhatsApp</a>
         </div>
       </div>
       </div>
-      <div style="overflow:hidden; min-width:0; margin-left:120px; width:calc(100% + 180px);">
-      <div style="display:flex; gap:24px; width:fit-content; animation:svcMarquee 50s linear infinite;" style-hover="animation-play-state:paused;">
+      <div class="services-marquee-wrap" style="overflow:hidden; min-width:0;">
+      <div style="display:flex; gap:1.519cqw; width:fit-content; animation:svcMarquee 50s linear infinite;">
         <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
-          <a href="#" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16; flex:0 0 500px; transition:transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease;" style-hover="transform:translateY(-8px); box-shadow:0 20px 40px rgba(23,21,18,0.35);">
-            <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%; transition:transform .5s ease;"></image-slot>
+          <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16;">
+            <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
             <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
             <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
             <div style="position:absolute; bottom:0; left:0; right:0; padding:20px 22px; display:flex; align-items:flex-end; justify-content:space-between; gap:10px;">
               <h3 style="font-family:'Poppins',sans-serif; font-weight:600; font-size:17px; text-transform:uppercase; letter-spacing:0.5px; color:#fff; margin:0;">{{ s.title }}</h3>
-              <span style="font-size:12px; color:#c8a04e; white-space:nowrap; display:inline-block; transition:transform .3s ease;">→</span>
+              <span style="font-size:12px; color:#c8a04e; white-space:nowrap;">→</span>
             </div>
           </a>
         </sc-for>
@@ -115,10 +270,10 @@
     </div>
   </section>
 
-  <section id="iletisim" style="background:#171512; padding:90px 60px; color:#fff;">
-    <h2 lang="tr" data-reveal="fade" style="font-family:'Poppins',sans-serif; font-weight:700;; font-size:48px; line-height:1.2; text-transform:uppercase; margin:0 0 60px; max-width:720px;">Hayalinizi <span style="font-weight:700; color:#fff;">birlikte</span><br />konuşalım.</h2>
-    <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:60px; border-top:1px solid #322e28; padding-top:50px;">
-      <div data-reveal="left">
+  <section id="iletisim" class="contact-section" style="background:#171512; color:#fff;">
+    <h2 lang="tr" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,4.5vw,48px); line-height:1.2; text-transform:uppercase; margin:0 0 60px; max-width:720px;">Hayalinizi <span style="font-weight:700; color:#fff;">birlikte</span><br />konuşalım.</h2>
+    <div class="contact-grid" style="display:grid; gap:60px; border-top:1px solid #322e28; padding-top:50px;">
+      <div>
         <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">KONUM</div>
         <p style="font-size:16px; line-height:1.6; margin:0 0 34px;">Cumhuriyet Mahallesi<br />Yavuz Sultan Selim Bulvarı No: 167/A</p>
         <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">İLETİŞİM KANALLARI</div>
@@ -126,17 +281,17 @@
         <p style="font-size:18px; font-weight:600; margin:0 0 34px;">0543 481 85 91</p>
         <div>
           <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">INSTAGRAM</div>
-          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#fff; font-size:16px; transition:color .3s ease;" style-hover="color:#c8a04e;">@cingil_tasarim_organizasyon</a>
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#fff; font-size:16px;">@cingil_tasarim_organizasyon</a>
         </div>
       </div>
-      <div data-reveal="right" style="border-radius:20px; overflow:hidden; align-self:stretch; margin-top:-260px; max-width:85%; transition-delay:.1s;">
+      <div class="contact-map" style="border-radius:20px; overflow:hidden; align-self:stretch;">
         <iframe src="https://www.google.com/maps?q=Cingil+Tasar%C4%B1m+Organizasyon,+Yavuz+Selim+Blv,+Ortahisar%2FTrabzon&z=17&output=embed" width="100%" height="100%" style="border:0; display:block; filter:grayscale(0.15) contrast(1.05);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
   </section>
 
-  <footer style="padding:0 60px 40px;">
-    <div data-reveal="up" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:50px; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
+  <footer class="site-footer">
+    <div class="footer-grid" style="display:grid; gap:50px; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
       <div>
         <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">Cingil Tasarım</div>
         <p style="font-size:13px; line-height:1.7; color:#7a7669; font-weight:300; max-width:300px; margin:0;">Düğün • Nişan • Kına • Özel Etkinlik Organizasyonları</p>
@@ -144,24 +299,24 @@
       <div>
         <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Menü</div>
         <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
-          <a href="#" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">Ana Sayfa</a>
-          <a href="#services" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">Hizmetlerimiz</a>
-          <a href="#" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">Hakkımızda</a>
-          <a href="#" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">İletişim</a>
+          <a href="#" style="color:#7a7669;">Ana Sayfa</a>
+          <a href="#services" style="color:#7a7669;">Hizmetlerimiz</a>
+          <a href="#" style="color:#7a7669;">Hakkımızda</a>
+          <a href="#" style="color:#7a7669;">İletişim</a>
         </div>
       </div>
       <div>
         <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">Sosyal Medya</div>
         <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
-          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">Instagram</a>
+          <a href="https://www.instagram.com/cingil_tasarim_organizasyon" style="color:#7a7669;">Instagram</a>
         </div>
       </div>
       <div>
         <div style="font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#171512; font-weight:600; margin-bottom:16px;">İletişim</div>
         <div style="display:flex; flex-direction:column; gap:9px; font-size:13px; color:#7a7669;">
           <span>Cumhuriyet Mahallesi, Yavuz Sultan Selim Bulvarı No: 167/A</span>
-          <a href="tel:+905434818591" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">0543 481 85 91</a>
-          <a href="https://wa.me/905434818591" style="color:#7a7669; transition:color .25s ease, padding-left .25s ease;" style-hover="color:#c8a04e; padding-left:4px;">WhatsApp</a>
+          <a href="tel:+905434818591" style="color:#7a7669;">0543 481 85 91</a>
+          <a href="https://wa.me/905434818591" style="color:#7a7669;">WhatsApp</a>
         </div>
       </div>
     </div>
@@ -191,21 +346,10 @@ class Component extends DCLogic {
     };
     window.addEventListener("scroll", this.onScroll, { passive: true });
     this.onScroll();
-
-    this.revealObserver = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          this.revealObserver.unobserve(entry.target);
-        }
-      }
-    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
-    document.querySelectorAll("[data-reveal]").forEach((el) => this.revealObserver.observe(el));
   }
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
-    if (this.revealObserver) this.revealObserver.disconnect();
   }
 
   renderVals() {
