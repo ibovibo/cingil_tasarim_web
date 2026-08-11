@@ -380,6 +380,10 @@ class Component extends DCLogic {
 
   pauseHero = (e) => {
     if (e && e.pointerType && e.pointerType !== "mouse") return;
+    if (this.heroTimeout) {
+      clearTimeout(this.heroTimeout);
+      this.heroTimeout = null;
+    }
     if (this.heroInterval) {
       clearInterval(this.heroInterval);
       this.heroInterval = null;
@@ -388,14 +392,18 @@ class Component extends DCLogic {
 
   resumeHero = (e) => {
     if (e && e.pointerType && e.pointerType !== "mouse") return;
-    if (!this.heroInterval) this.startHeroRotation();
+    if (!this.heroInterval && !this.heroTimeout) this.startHeroRotation(3500);
   };
 
-  startHeroRotation() {
-    if (this.heroInterval) return;
-    this.heroInterval = setInterval(() => {
+  startHeroRotation(firstDelay = 2900) {
+    if (this.heroInterval || this.heroTimeout) return;
+    this.heroTimeout = setTimeout(() => {
+      this.heroTimeout = null;
       this.setState((s) => ({ heroSlide: (s.heroSlide + 1) % HERO_SLIDES.length }));
-    }, 3500);
+      this.heroInterval = setInterval(() => {
+        this.setState((s) => ({ heroSlide: (s.heroSlide + 1) % HERO_SLIDES.length }));
+      }, 3500);
+    }, firstDelay);
   }
 
   componentDidMount() {
@@ -432,6 +440,7 @@ class Component extends DCLogic {
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
+    if (this.heroTimeout) clearTimeout(this.heroTimeout);
     if (this.heroInterval) clearInterval(this.heroInterval);
     if (this.revealObserver) this.revealObserver.disconnect();
   }
