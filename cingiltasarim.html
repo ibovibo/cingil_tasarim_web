@@ -241,7 +241,7 @@
 
   <section id="home" class="hero-section">
     <div style="width:85%; margin:0 auto;">
-      <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; container-type:inline-size; animation:heroImgIn 1.3s cubic-bezier(0.16,1,0.3,1) both;" onmouseenter="{{ pauseHero }}" onmouseleave="{{ resumeHero }}">
+      <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; container-type:inline-size; animation:heroImgIn 1.3s cubic-bezier(0.16,1,0.3,1) both;" onpointerenter="{{ pauseHero }}" onpointerleave="{{ resumeHero }}">
         <sc-for list="{{ heroSlides }}" as="s">
           <div class="hero-slide" style="opacity:{{ s.opacity }}; z-index:{{ s.zIndex }};">
             <img src="{{ s.img }}" alt="{{ s.alt }}" style="object-position:{{ s.pos }}; transform:scale({{ s.scale }});" />
@@ -370,22 +370,24 @@
 <script type="text/x-dc" data-dc-script>
 const HERO_SLIDES = [
   { img: "./assets/ana-header.png", alt: "Gelin çiçekler arasında", pos: "center 30%", topText: "Mutluluğunuzu", boldText: "BİZ TASARLIYALIM" },
-  { img: "./assets/ana-header2.png", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Hikayenizi", boldText: "GÖRKEMLE YAZALIM" },
-  { img: "./assets/ana-header3.png", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Anılarınızı", boldText: "SONSUZLAŞTIRALIM" },
+  { img: "./assets/ana-header2.png?v=2", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Hikayenizi", boldText: "GÖRKEMLE YAZALIM" },
+  { img: "./assets/ana-header3.png?v=2", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Anılarınızı", boldText: "SONSUZLAŞTIRALIM" },
   { img: "./assets/ana-header4.png", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Özel Günlerinizi", boldText: "ZARAFETLE SÜSLEYELİM" }
 ];
 
 class Component extends DCLogic {
   state = { active: "home", scrolled: false, heroSlide: 0 };
 
-  pauseHero = () => {
+  pauseHero = (e) => {
+    if (e && e.pointerType && e.pointerType !== "mouse") return;
     if (this.heroInterval) {
       clearInterval(this.heroInterval);
       this.heroInterval = null;
     }
   };
 
-  resumeHero = () => {
+  resumeHero = (e) => {
+    if (e && e.pointerType && e.pointerType !== "mouse") return;
     if (!this.heroInterval) this.startHeroRotation();
   };
 
