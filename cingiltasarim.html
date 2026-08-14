@@ -34,7 +34,20 @@
 
     .brand-tagline { transition: color .4s ease; }
     .nav-link { transition: color .3s ease, letter-spacing .3s ease; }
-    .header-cta { transition: transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease; }
+    .whatsapp-float { transition: transform .3s cubic-bezier(0.34,1.56,0.64,1); }
+    .whatsapp-icon { width: 80px; height: 80px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 10px 26px rgba(37,211,102,0.45); transition: box-shadow .3s ease; }
+    .whatsapp-float:hover .whatsapp-icon { box-shadow: 0 14px 34px rgba(37,211,102,0.6); }
+    /* Periodically pops a "Bize Ulaşın" pill open next to the icon to draw
+       attention, then collapses back — max-width (not width) is animated
+       since it's the one sizing property that can start/end at 0 while
+       still allowing the label's natural text width in between. */
+    .whatsapp-label { display: flex; align-items: center; overflow: hidden; white-space: nowrap; max-width: 0; opacity: 0; margin-left: 0; padding: 0; border-radius: 24px; background: #171512; color: #fff; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; box-shadow: 0 8px 20px rgba(23,21,18,0.25); animation: waLabelPulse 8s ease-in-out infinite; }
+    .whatsapp-float:hover .whatsapp-label { animation-play-state: paused; max-width: 160px; opacity: 1; margin-left: 12px; padding: 10px 18px; }
+    @keyframes waLabelPulse {
+      0%, 55% { max-width: 0; opacity: 0; margin-left: 0; padding: 10px 0; }
+      65%, 85% { max-width: 160px; opacity: 1; margin-left: 12px; padding: 10px 18px; }
+      95%, 100% { max-width: 0; opacity: 0; margin-left: 0; padding: 10px 0; }
+    }
     .logo-mark { transition: transform .35s cubic-bezier(0.34,1.56,0.64,1); }
 
     .hero-slide { position: absolute; inset: 0; transition: opacity 2.9s cubic-bezier(0.45,0,0.2,1); }
@@ -43,6 +56,13 @@
     .hero-dot { width: 14px; height: 14px; border-radius: 50%; background: rgba(23,21,18,0.18); cursor: pointer; border: none; padding: 0; transition: background .3s ease, transform .3s ease; }
     .hero-dot:hover { background: rgba(23,21,18,0.35); }
     .hero-dot.active { background: #c8a04e; transform: scale(1.35); }
+    /* Same technique as .hero-title: every value is a percentage of the
+       image container's own width (cqw), calibrated to equal today's
+       fixed px value at the 2074px content width a >=2560px PC screen
+       produces (85% of the hero section's 2440px content width). This
+       keeps the button shrinking/growing in lockstep with the photo and
+       headline at every screen size instead of jumping at one breakpoint. */
+    .hero-cta { position: absolute; right: clamp(20px, 2.894cqw, 60px); bottom: clamp(20px, 2.7cqw, 56px); z-index: 3; gap: clamp(5px, 0.386cqw, 8px); padding: clamp(10px, 0.772cqw, 16px) clamp(18px, 1.447cqw, 30px); font-size: clamp(13px, 0.772cqw, 16px); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease; }
 
     .about-image img { transition: transform .8s cubic-bezier(0.16,1,0.3,1); }
     .services-cta { transition: transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease; }
@@ -50,6 +70,8 @@
     .services-track { transition: none; }
     .service-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
     .service-card-arrow { display: inline-block; transition: transform .3s ease; }
+    .review-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
+    .review-stars { letter-spacing: 2px; }
 
     /* ==========================================================
        Base rules below reproduce the current desktop/PC layout
@@ -62,10 +84,25 @@
        can look "stuck" while actively scrolling on macOS trackpads even
        though it works fine with Chrome's mouse-wheel scrolling on PC.
        Forcing its own compositor layer keeps it repainting continuously. */
-    .site-header { padding: 14px 20px; flex-wrap: wrap; row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; transition: background-color .45s ease, backdrop-filter .45s ease, border-color .45s ease; }
-    .site-nav { gap: 36px; flex-wrap: wrap; row-gap: 8px; }
-    .nav-link { font-size: 18px; }
-    .header-cta { padding: 9px 14px; font-size: 12px; }
+    /* Same technique as .hero-title, but calibrated to a 1400px reference
+       (a typical ~1440px laptop's content width) instead of the 2560px PC
+       reference the hero uses — the header spans the full viewport (not
+       an 85%-wide, already-shrinking photo box), so a 2560px reference
+       left it visibly undersized on every ordinary desktop/laptop screen.
+       This way sizes stay at today's normal desktop values from ~1440px
+       up, and only shrink gradually below that, down to the old mobile
+       floor — no more 1024px/640px size jumps. */
+    .site-header { container-type: inline-size; padding: clamp(11px, 1.1429cqw, 16px) clamp(16px, 1.5714cqw, 22px); row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; transition: background-color .45s ease, backdrop-filter .45s ease, border-color .45s ease; }
+    /* Middle column of the header's 1fr/auto/1fr grid: with the outer
+       columns always equal width, this column sits at the header's true
+       center at every size — no space-between balancing against the
+       logo, and no position:absolute (so if it ever wraps to 2 lines,
+       the header just grows taller instead of overlapping the logo). */
+    .site-nav { justify-self: center; gap: clamp(13px, 2.8571cqw, 40px); flex-wrap: wrap; row-gap: 8px; }
+    .nav-link { font-size: clamp(12px, 1.4286cqw, 20px); }
+    .logo-mark { width: clamp(24px, 2.5714cqw, 36px); height: auto; }
+    .brand-name { font-size: clamp(22px, 2.2857cqw, 32px); }
+    .brand-tagline { font-size: clamp(10px, 0.8571cqw, 12px); }
 
     .hero-section { padding: 56px 60px 0; }
     /* Font size is tied to the image container's own width (cqw), not the
@@ -121,6 +158,10 @@
     .services-desc { font-size: clamp(16px, 1.899cqw, 30px); }
     .services-marquee-wrap { margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
     .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); }
+
+    .reviews-section { padding: 130px 60px; }
+    .reviews-heading { font-size: clamp(28px, 3vw, 48px); }
+    .reviews-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
 
     .contact-section { padding: 90px 60px; }
     .contact-grid { grid-template-columns: 1fr 1.3fr; }
@@ -180,6 +221,7 @@
       .hero-section { padding: 44px 36px 0; }
       .about-section { padding: 110px 36px 70px; }
       .services-section { padding: 100px 36px 80px; }
+      .reviews-section { padding: 90px 36px; }
       .contact-section { padding: 70px 36px; }
       .site-footer { padding: 0 36px 36px; }
       .quote-section { padding: 70px 36px; }
@@ -190,19 +232,16 @@
       .contact-grid { grid-template-columns: 1fr; row-gap: 36px; }
       .contact-map { min-height: 380px; max-width: 100%; }
       .footer-grid { grid-template-columns: 1fr 1fr; row-gap: 32px; }
-      .site-nav { gap: 22px; }
-      .nav-link { font-size: 15px; }
       .quote-heading { white-space: normal; }
     }
 
     /* ---------- Mobile ---------- */
     @media (max-width: 640px) {
-      .site-header { padding: 10px 14px; }
       .brand-tagline { display: none; }
-      .header-cta-label { display: none; }
-      .header-cta { padding: 10px; }
-      .site-nav { gap: 12px; }
-      .nav-link { font-size: 11px; letter-spacing: 0.3px; }
+      .whatsapp-float { left: 16px; bottom: 16px; }
+      .whatsapp-icon { width: 64px; height: 64px; }
+      .whatsapp-icon svg { width: 34px; height: 34px; }
+      .whatsapp-label { font-size: 12px; }
 
       .hero-section { padding: 24px 16px 0; }
       .hero-title { padding: 0 20px 28px 24px; }
@@ -210,6 +249,7 @@
       .quote-section { padding: 50px 20px; }
       .services-section { padding: 70px 20px 60px; }
       .service-card { flex: 0 0 78vw; }
+      .reviews-section { padding: 70px 20px 60px; }
       .contact-section { padding: 50px 20px; }
       .site-footer { padding: 0 20px 28px; }
       .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
@@ -219,25 +259,29 @@
 
 <div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
 
-  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" class="logo-mark" style="width:30px; height:auto;" style-hover="transform:scale(1.1) rotate(-4deg);" />
+  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
+    <div style="display:flex; align-items:center; gap:10px; justify-self:start;">
+      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" class="logo-mark" style-hover="transform:scale(1.1) rotate(-4deg);" />
       <div>
-        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:28px; color:#c8a04e; line-height:1;">Cingil</div>
-        <div class="brand-tagline" style="font-size:11px; letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
+        <div class="brand-name" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; line-height:1;">Cingil</div>
+        <div class="brand-tagline" style="letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
       </div>
     </div>
     <nav class="site-nav" style="display:flex; align-items:center;">
       <a href="#home" class="nav-link" style="color:{{ navHomeColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">ANA SAYFA</a>
       <a href="#about" class="nav-link" style="color:{{ navAboutColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">HAKKIMIZDA</a>
       <a href="#services" class="nav-link" style="color:{{ navServicesColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">HİZMETLERİMİZ</a>
+      <a href="#yorumlar" class="nav-link" style="color:{{ navReviewsColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">YORUMLAR</a>
       <a href="#iletisim" class="nav-link" style="color:{{ navContactColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">İLETİŞİM</a>
     </nav>
-    <a href="https://wa.me/905434818591" class="header-cta" style="display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; border-radius:30px; font-weight:600; line-height:1; white-space:nowrap; flex-shrink:0; margin-left:12px;" style-hover="transform:translateY(-2px) scale(1.04); box-shadow:0 10px 22px rgba(37,211,102,0.4);">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:block; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.149-.15.347-.397.52-.596.174-.198.232-.34.347-.567.116-.228.058-.427-.04-.596-.099-.174-.892-2.146-1.223-2.874-.325-.71-.658-.61-.905-.62-.234-.01-.502-.012-.77-.012-.267 0-.7.1-.966.397-.267.297-1.02.995-1.02 2.43 0 1.436 1.02 2.828 1.163 3.023.148.199 1.93 2.938 4.68 4.001 2.75 1.063 2.75.71 3.243.669.492-.043 1.593-.649 1.816-1.276.223-.63.223-1.17.15-1.276-.075-.106-.273-.174-.57-.297z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.98.575 3.826 1.567 5.383L2 22l4.727-1.53A9.94 9.94 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 0 1-4.09-1.117l-.294-.174-2.81.91.919-2.727-.19-.28A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
-      <span class="header-cta-label">Bize Ulaş</span>
-    </a>
   </header>
+
+  <a href="https://wa.me/905434818591" target="_blank" rel="noopener" class="whatsapp-float" aria-label="WhatsApp ile bize ulaşın" style="position:fixed; left:24px; bottom:24px; z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
+    <span class="whatsapp-icon">
+      <svg width="42" height="42" viewBox="0 0 32 32" fill="#fff" style="display:block;"><path d="M16.004 3C9.02 3 3.354 8.665 3.354 15.646c0 2.325.633 4.5 1.732 6.368L3 29l7.15-2.043a12.6 12.6 0 0 0 5.854 1.44h.005c6.984 0 12.65-5.664 12.65-12.646C28.66 8.769 22.995 3.003 16.004 3m0 23.1a10.5 10.5 0 0 1-5.354-1.466l-.384-.228-3.99 1.14 1.16-3.88-.25-.398a10.44 10.44 0 0 1-1.603-5.577c0-5.788 4.71-10.497 10.503-10.497 2.805 0 5.44 1.093 7.423 3.078a10.43 10.43 0 0 1 3.076 7.428c0 5.79-4.71 10.5-10.581 10.5m5.755-7.868c-.315-.158-1.864-.92-2.153-1.026-.29-.105-.5-.158-.71.158s-.815 1.026-1 1.237-.368.238-.684.08-1.335-.492-2.542-1.567c-.94-.838-1.574-1.874-1.758-2.19s-.02-.487.138-.645c.142-.142.315-.369.473-.554.157-.184.21-.316.315-.526s.053-.395-.026-.554-.71-1.71-.973-2.343c-.256-.616-.517-.533-.71-.543l-.605-.01c-.21 0-.552.079-.842.395s-1.104 1.079-1.104 2.631 1.13 3.055 1.288 3.266c.157.21 2.226 3.4 5.394 4.767.754.325 1.343.52 1.802.667.757.24 1.446.207 1.99.126.607-.091 1.864-.762 2.127-1.498s.263-1.368.184-1.499-.288-.21-.604-.368" /></svg>
+    </span>
+    <span class="whatsapp-label">Bize Ulaşın</span>
+  </a>
 
   <section id="home" class="hero-section">
     <div style="width:85%; margin:0 auto;">
@@ -250,6 +294,10 @@
             <h2 class="hero-title" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .3s both;">{{ s.topText }}</span><span style="color:#c8a04e; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .5s both;">{{ s.boldText }}</span></h2>
           </div>
         </sc-for>
+        <a href="https://wa.me/905434818591?text=Merhaba%2C%20randevu%20almak%20istiyorum." target="_blank" rel="noopener" class="hero-cta" style="display:inline-flex; align-items:center; background:#c8a04e; color:#fff; border-radius:40px; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; line-height:1; white-space:nowrap; box-shadow:0 14px 30px rgba(200,160,78,0.4); animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .7s both;" style-hover="transform:translateY(-3px) scale(1.03); box-shadow:0 18px 38px rgba(200,160,78,0.55);">
+          Randevu Al
+          <span style="font-size:1.15em;">→</span>
+        </a>
       </div>
       <div class="hero-dots">
         <sc-for list="{{ heroSlides }}" as="s">
@@ -308,6 +356,23 @@
         </sc-for>
       </div>
       </div>
+    </div>
+  </section>
+
+  <section id="yorumlar" class="reviews-section">
+    <div style="text-align:center; margin-bottom:70px;">
+      <div class="reviews-heading" style="display:inline-block; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">YORUMLAR</div>
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; color:#c8a04e; margin:18px 0 0;">Bize güvenen çiftlerin ve ailelerin sözleri</p>
+    </div>
+    <div class="reviews-grid" style="display:grid; max-width:1400px; margin:0 auto;">
+      <sc-for list="{{ reviews }}" as="r">
+        <div class="review-card" data-reveal="up" style="background:#fff; border-radius:24px; padding:44px 36px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc; transition-delay:{{ r.delay }};" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
+          <div class="review-stars" style="color:#c8a04e; font-size:18px; margin-bottom:18px;">★★★★★</div>
+          <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; line-height:1.6; color:#171512; margin:0 0 26px;">"{{ r.quote }}"</p>
+          <div style="font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#171512;">{{ r.name }}</div>
+          <div style="font-family:'Poppins',sans-serif; font-size:13px; color:#c8a04e; margin-top:2px;">{{ r.event }}</div>
+        </div>
+      </sc-for>
     </div>
   </section>
 
@@ -409,7 +474,7 @@ class Component extends DCLogic {
   componentDidMount() {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
-    this.sectionIds = ["home", "about", "services", "iletisim"];
+    this.sectionIds = ["home", "about", "services", "yorumlar", "iletisim"];
     this.onScroll = () => {
       const mid = window.innerHeight * 0.35;
       let current = "home";
@@ -452,6 +517,7 @@ class Component extends DCLogic {
     const navServicesColor = this.state.active === "services" ? gold : dark;
     const navAboutColor = this.state.active === "about" ? gold : dark;
     const navContactColor = this.state.active === "iletisim" ? gold : dark;
+    const navReviewsColor = this.state.active === "yorumlar" ? gold : dark;
     const headerBg = this.state.scrolled ? "rgba(23,21,18,0.55)" : "#fbf9f5";
     const headerBorder = this.state.scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid #ece7dc";
     const headerBlur = this.state.scrolled ? "blur(16px)" : "none";
@@ -488,6 +554,11 @@ class Component extends DCLogic {
       ["25+", "Yaratıcı Ekip"]
     ].map(s => ({ num: s[0], label: s[1] }));
     const servicesLoop = services.concat(services.map(s => ({ ...s, imgId: s.imgId + "-2" })));
+    const reviews = [
+      ["Ayşe & Mehmet Y.", "Düğün Organizasyonu", "Cingil Tasarım ile çalışmak hayatımızın en güzel kararlarından biriydi. Her detay tam istediğimiz gibiydi, gününüzü hiç düşünmeden yaşadık."],
+      ["Zeynep K.", "Nişan Organizasyonu", "Ailemizin nişan törenini emanet ettik ve gerçekten hayalimizdeki atmosferi yarattılar. Herkes dekorasyona hayran kaldı."],
+      ["Burak & Elif D.", "Kına Gecesi", "Kına gecemiz konuşuldu! Renkler, ışıklar, müzik... her şey mükemmel bir uyum içindeydi, emeğinize sağlık."]
+    ].map((r, i) => ({ name: r[0], event: r[1], quote: r[2], delay: (i * 0.12) + "s" }));
     const heroSlides = HERO_SLIDES.map((s, i) => ({
       ...s,
       opacity: i === this.state.heroSlide ? 1 : 0,
@@ -497,7 +568,7 @@ class Component extends DCLogic {
       dotLabel: "Görsel " + (i + 1),
       onSelect: () => this.setState({ heroSlide: i })
     }));
-    return { services, servicesLoop, features, stats, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, headerBg, headerBorder, headerBlur, taglineColor };
+    return { services, servicesLoop, features, stats, reviews, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor };
   }
 }
 </script>
