@@ -70,6 +70,7 @@
     .services-track { transition: none; }
     .service-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
     .service-card-arrow { display: inline-block; transition: transform .3s ease; }
+    .reviews-track { transition: none; }
     .review-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
     .review-stars { letter-spacing: 2px; }
 
@@ -161,7 +162,11 @@
 
     .reviews-section { padding: 130px 60px; }
     .reviews-heading { font-size: clamp(28px, 3vw, 48px); }
-    .reviews-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+    /* container-type turns the wrap's own (max-width-capped) inline size into
+       the cqw reference, so the card width formula below always resolves to
+       "exactly 3 cards + 2x 32px gap" regardless of viewport width. */
+    .reviews-marquee-wrap { container-type: inline-size; }
+    .review-card { flex: 0 0 calc(33.333cqw - 21.333px); }
 
     .contact-section { padding: 90px 60px; }
     .contact-grid { grid-template-columns: 1fr 1.3fr; }
@@ -233,6 +238,7 @@
       .contact-map { min-height: 380px; max-width: 100%; }
       .footer-grid { grid-template-columns: 1fr 1fr; row-gap: 32px; }
       .quote-heading { white-space: normal; }
+      .review-card { flex: 0 0 calc(50cqw - 16px); }
     }
 
     /* ---------- Mobile ---------- */
@@ -250,6 +256,7 @@
       .services-section { padding: 70px 20px 60px; }
       .service-card { flex: 0 0 78vw; }
       .reviews-section { padding: 70px 20px 60px; }
+      .review-card { flex: 0 0 84vw; }
       .contact-section { padding: 50px 20px; }
       .site-footer { padding: 0 20px 28px; }
       .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
@@ -364,15 +371,17 @@
       <div class="reviews-heading" style="display:inline-block; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">YORUMLAR</div>
       <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; color:#c8a04e; margin:18px 0 0;">Bize güvenen çiftlerin ve ailelerin sözleri</p>
     </div>
-    <div class="reviews-grid" style="display:grid; max-width:1400px; margin:0 auto;">
-      <sc-for list="{{ reviews }}" as="r">
-        <div class="review-card" data-reveal="up" style="background:#fff; border-radius:24px; padding:44px 36px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc; transition-delay:{{ r.delay }};" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
-          <div class="review-stars" style="color:#c8a04e; font-size:18px; margin-bottom:18px;">★★★★★</div>
-          <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; line-height:1.6; color:#171512; margin:0 0 26px;">"{{ r.quote }}"</p>
-          <div style="font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#171512;">{{ r.name }}</div>
-          <div style="font-family:'Poppins',sans-serif; font-size:13px; color:#c8a04e; margin-top:2px;">{{ r.event }}</div>
-        </div>
-      </sc-for>
+    <div class="reviews-marquee-wrap" style="max-width:1400px; margin:0 auto; overflow:hidden;">
+      <div class="reviews-track" style="display:flex; gap:32px; width:fit-content; animation:svcMarquee 48s linear infinite;" style-hover="animation-play-state:paused;">
+        <sc-for list="{{ reviewsLoop }}" as="r">
+          <div class="review-card" style="background:#fff; border-radius:24px; padding:44px 36px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc;" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
+            <div class="review-stars" style="color:#c8a04e; font-size:18px; margin-bottom:18px;">★★★★★</div>
+            <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; line-height:1.6; color:#171512; margin:0 0 26px;">"{{ r.quote }}"</p>
+            <div style="font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#171512;">{{ r.name }}</div>
+            <div style="font-family:'Poppins',sans-serif; font-size:13px; color:#c8a04e; margin-top:2px;">{{ r.event }}</div>
+          </div>
+        </sc-for>
+      </div>
     </div>
   </section>
 
@@ -555,10 +564,17 @@ class Component extends DCLogic {
     ].map(s => ({ num: s[0], label: s[1] }));
     const servicesLoop = services.concat(services.map(s => ({ ...s, imgId: s.imgId + "-2" })));
     const reviews = [
-      ["Ayşe & Mehmet Y.", "Düğün Organizasyonu", "Cingil Tasarım ile çalışmak hayatımızın en güzel kararlarından biriydi. Her detay tam istediğimiz gibiydi, gününüzü hiç düşünmeden yaşadık."],
-      ["Zeynep K.", "Nişan Organizasyonu", "Ailemizin nişan törenini emanet ettik ve gerçekten hayalimizdeki atmosferi yarattılar. Herkes dekorasyona hayran kaldı."],
-      ["Burak & Elif D.", "Kına Gecesi", "Kına gecemiz konuşuldu! Renkler, ışıklar, müzik... her şey mükemmel bir uyum içindeydi, emeğinize sağlık."]
-    ].map((r, i) => ({ name: r[0], event: r[1], quote: r[2], delay: (i * 0.12) + "s" }));
+      ["Büşra Y.", "Kına Gecesi", "Kına gecemiz için yaptıkları dekorasyon harikaydı ❤️ Özellikle arka fon ve masa süslemeleri çok güzel olmuştu. Fotoğraflarda da çok güzel çıktı."],
+      ["Ayşe & Can", "Düğün Organizasyonu", "Düğünümüz için sade ama şık bir şey istemiştik, tam olarak istediğimiz gibi yaptılar. Fazla abartılı olmadan çok güzel bir ortam oluştu. Emeğinize sağlık."],
+      ["Merve T.", "Organizasyon", "İlk görüşmeden itibaren ne istediğimizi anlamaları çok hoşumuza gitti. Organizasyon günü de her şey zamanında hazırdı. Bizim için stresli olması gereken bir gün çok daha rahat geçti."],
+      ["Derya & Kerem", "Nişan Organizasyonu", "Nişanımız için tercih ettik ve iyi ki de etmişiz. Çiçeklerin renkleri, masa düzeni, arka fon her şey birbirine çok yakışmıştı. Gelen misafirlerden de çok güzel yorumlar aldık 😊"],
+      ["Fatma K.", "Açılış Organizasyonu", "Açılış organizasyonumuz için çalıştık. Mekanın havasını tamamen değiştirdiler. Özellikle giriş kısmındaki süslemeler çok beğenildi. İlginiz için teşekkür ederiz."],
+      ["İrem & Furkan", "Organizasyon", "Her şeyi son anda netleştirmemize rağmen yardımcı oldular. Sonuç gerçekten beklediğimizden güzel oldu. Özellikle çiçek ve masa detayları çok başarılıydı. Ellerinize sağlık 🌸"],
+      ["Selin A.", "Doğum Günü", "Kızımızın doğum günü için Cingil Tasarım ile çalıştık. Konsept konusunda çok güzel fikirler verdiler, sonuç da gerçekten çok tatlı oldu. Çocuklar kadar biz de çok beğendik 😊"],
+      ["Melis K.", "Doğum Günü", "Doğum günü organizasyonu için sade bir konsept istemiştik. Her detayla tek tek ilgilendiler, özellikle masa ve arka fon çok güzel olmuştu. Teşekkür ederiz 🌸"],
+      ["Burak D.", "Açılış Organizasyonu", "Açılış etkinliğimiz için Cingil Tasarım ile çalıştık. Kurulumdan etkinlik bitimine kadar her şey düzenliydi."]
+    ].map(r => ({ name: r[0], event: r[1], quote: r[2] }));
+    const reviewsLoop = reviews.concat(reviews);
     const heroSlides = HERO_SLIDES.map((s, i) => ({
       ...s,
       opacity: i === this.state.heroSlide ? 1 : 0,
@@ -568,7 +584,7 @@ class Component extends DCLogic {
       dotLabel: "Görsel " + (i + 1),
       onSelect: () => this.setState({ heroSlide: i })
     }));
-    return { services, servicesLoop, features, stats, reviews, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor };
+    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor };
   }
 }
 </script>
