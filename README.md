@@ -4,7 +4,7 @@ Cingıl
 
 
 
-Bu klasör, https://www.cingiltasarim.com/ sitesinin basit bir statik kopyası olarak oluşturuldu. Site başlığı `Cingil Tasarim` olarak ayarlandı; içeriği daha sonra düzenleyebilirsiniz.
+Bu klasör, https://www.Cingıltasarim.com/ sitesinin basit bir statik kopyası olarak oluşturuldu. Site başlığı `CingılTasarim` olarak ayarlandı; içeriği daha sonra düzenleyebilirsiniz.
 
 
 
