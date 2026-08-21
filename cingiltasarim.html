@@ -52,6 +52,23 @@
     }
     .logo-mark { transition: transform .35s cubic-bezier(0.34,1.56,0.64,1); }
 
+    /* Mobile hamburger menu: a new component, not part of the desktop
+       layout, so it stays display:none by default at every width. The
+       @media (max-width: 640px) block further down is the only place
+       that turns it on — desktop is untouched whether or not that block
+       is present at all. */
+    .hamburger-btn { display: none; }
+    .mobile-nav-overlay { display: none; }
+    .mobile-nav-panel { display: none; }
+    .hero-cta-mobile { display: none; }
+    .hamburger-btn span { display: block; width: 24px; height: 2px; border-radius: 2px; transition: transform .3s ease, opacity .3s ease; }
+    .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+    .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-nav-link { display: block; padding: 16px 4px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.5px; color: #f4ecdf; border-bottom: 1px solid rgba(255,255,255,0.08); transition: color .2s ease; }
+    .mobile-nav-link.active { color: #c8a04e; }
+    .mobile-nav-close { position: absolute; top: 22px; right: 20px; width: 36px; height: 36px; background: none; border: none; color: #f4ecdf; font-size: 22px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
     .hero-slide { position: absolute; inset: 0; transition: opacity 2.9s cubic-bezier(0.45,0,0.2,1); }
     .hero-slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 2.9s cubic-bezier(0.45,0,0.2,1); }
     .hero-dots { display: flex; justify-content: center; gap: 14px; margin-top: 20px; }
@@ -64,8 +81,10 @@
        produces (85% of the hero section's 2440px content width). This
        keeps the button shrinking/growing in lockstep with the photo and
        headline at every screen size instead of jumping at one breakpoint. */
-    .hero-cta { position: absolute; right: clamp(20px, 2.894cqw, 60px); bottom: clamp(20px, 2.7cqw, 56px); z-index: 3; gap: clamp(5px, 0.386cqw, 8px); padding: clamp(10px, 0.772cqw, 16px) clamp(18px, 1.447cqw, 30px); font-size: clamp(13px, 0.772cqw, 16px); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease; }
+    .hero-cta { display: inline-flex; position: absolute; right: clamp(20px, 2.894cqw, 60px); bottom: clamp(20px, 2.7cqw, 56px); z-index: 3; gap: clamp(5px, 0.386cqw, 8px); padding: clamp(10px, 0.772cqw, 16px) clamp(18px, 1.447cqw, 30px); font-size: clamp(13px, 0.772cqw, 16px); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease; }
 
+    .hero-frame { width: 85%; margin: 0 auto; }
+    .hero-visual { aspect-ratio: 16/8; }
     .about-image img { transition: transform .8s cubic-bezier(0.16,1,0.3,1); }
     .services-cta { transition: transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease; }
     .services-arrow { display: inline-block; transition: transform .3s ease; }
@@ -95,13 +114,13 @@
        This way sizes stay at today's normal desktop values from ~1440px
        up, and only shrink gradually below that, down to the old mobile
        floor — no more 1024px/640px size jumps. */
-    .site-header { container-type: inline-size; padding: clamp(11px, 1.1429cqw, 16px) clamp(16px, 1.5714cqw, 22px); row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; transition: background-color .45s ease, backdrop-filter .45s ease, border-color .45s ease; }
+    .site-header { grid-template-columns: 1fr auto 1fr; container-type: inline-size; padding: clamp(11px, 1.1429cqw, 16px) clamp(16px, 1.5714cqw, 22px); row-gap: 10px; transform: translateZ(0); will-change: background-color, backdrop-filter; transition: background-color .45s ease, backdrop-filter .45s ease, border-color .45s ease; }
     /* Middle column of the header's 1fr/auto/1fr grid: with the outer
        columns always equal width, this column sits at the header's true
        center at every size — no space-between balancing against the
        logo, and no position:absolute (so if it ever wraps to 2 lines,
        the header just grows taller instead of overlapping the logo). */
-    .site-nav { justify-self: center; gap: clamp(13px, 2.8571cqw, 40px); flex-wrap: wrap; row-gap: 8px; }
+    .site-nav { display: flex; align-items: center; justify-self: center; gap: clamp(13px, 2.8571cqw, 40px); flex-wrap: wrap; row-gap: 8px; }
     .nav-link { font-size: clamp(12px, 1.4286cqw, 20px); }
     .logo-mark { width: clamp(24px, 2.5714cqw, 36px); height: auto; }
     .brand-name { font-size: clamp(22px, 2.2857cqw, 32px); }
@@ -127,16 +146,17 @@
        calibrated to equal today's fixed px value at the 2440px content
        width a 2560px-wide PC screen produces (e.g. 24.59cqw = 600px/2440px). */
     .about-section { padding: 160px 60px 100px; container-type: inline-size; }
-    .about-heading { font-size: clamp(28px, 2.459cqw, 60px); }
+    .about-heading-wrap { text-align: center; margin-bottom: 110px; }
+    .about-heading { font-size: clamp(28px, 2.459cqw, 60px); letter-spacing: 3px; padding-bottom: 14px; border-bottom: 3px solid #171512; }
     .about-grid { grid-template-columns: 1fr 1.5fr; gap: clamp(16px, 1.639cqw, 40px); }
-    .about-image { max-width: clamp(200px, 24.59cqw, 600px); margin-left: clamp(0px, 7.377cqw, 180px); }
+    .about-image { max-width: clamp(200px, 24.59cqw, 600px); margin-left: clamp(0px, 7.377cqw, 180px); aspect-ratio: 4/5; }
     .about-text { margin-left: clamp(-40px, -1.639cqw, 0px); }
     .about-quote-1 { font-size: clamp(24px, 2.295cqw, 56px); }
     .about-body { font-size: clamp(15px, 1.598cqw, 39px); }
     .about-quote-2 { font-size: clamp(26px, 2.623cqw, 64px); }
 
     .quote-section { padding: 100px 60px; }
-    .quote-heading { white-space: nowrap; }
+    .quote-heading { font-size: clamp(30px, 4vw, 76px); line-height: 1.25; white-space: nowrap; }
 
     /* Same technique as .hero-title/.about-section: every size below is a
        percentage of the section's own content width (cqw), calibrated to
@@ -160,7 +180,7 @@
     .services-title { font-size: clamp(24px, 2.911cqw, 46px); margin-bottom: 60px; }
     .services-desc { font-size: clamp(16px, 1.899cqw, 30px); }
     .services-marquee-wrap { margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
-    .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); }
+    .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); aspect-ratio: 9/16; }
 
     .reviews-section { padding: 130px 60px; }
     .reviews-heading { font-size: clamp(28px, 3vw, 48px); }
@@ -168,7 +188,8 @@
        the cqw reference, so the card width formula below always resolves to
        "exactly 3 cards + 2x 32px gap" regardless of viewport width. */
     .reviews-marquee-wrap { container-type: inline-size; }
-    .review-card { flex: 0 0 calc(33.333cqw - 21.333px); }
+    .review-card { flex: 0 0 calc(33.333cqw - 21.333px); padding: 44px 36px; }
+    .review-quote { font-size: 20px; line-height: 1.6; margin: 0 0 26px; }
 
     .contact-section { padding: 90px 60px; }
     .contact-grid { grid-template-columns: 1fr 1.3fr; }
@@ -254,14 +275,83 @@
       .instagram-icon svg { width: 26px; height: 26px; }
       .whatsapp-label { font-size: 12px; }
 
+      /* Top nav is replaced by the hamburger + slide-in panel below. The
+         header's desktop grid is 1fr/auto/1fr so the (now empty) middle
+         column keeps splitting space between logo and button; switching
+         to auto/1fr/auto here instead sizes the outer columns to their
+         own content, so the button sits flush against the true right
+         edge of the header instead of wherever the two 1fr tracks
+         happen to land. */
+      .site-header { grid-template-columns: auto 1fr auto; }
+      .site-nav { display: none; }
+      .hamburger-btn { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; width: 48px; height: 48px; background: none; border: none; padding: 0; cursor: pointer; justify-self: end; }
+      .hamburger-btn span { width: 28px; height: 3px; }
+      .hamburger-btn.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+      .hamburger-btn.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+      .mobile-nav-overlay { display: block; position: fixed; inset: 0; background: rgba(23,21,18,0.55); z-index: 290; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+      .mobile-nav-overlay.open { opacity: 1; pointer-events: auto; }
+      .mobile-nav-panel { display: flex; flex-direction: column; position: fixed; top: 0; right: 0; bottom: 0; width: 78vw; max-width: 320px; background: #171512; z-index: 300; padding: 96px 28px 40px; gap: 2px; transform: translateX(100%); transition: transform .4s cubic-bezier(0.16,1,0.3,1); box-shadow: -16px 0 50px rgba(0,0,0,0.3); overflow-y: auto; }
+      .mobile-nav-panel.open { transform: translateX(0); }
+
       .hero-section { padding: 24px 16px 0; }
-      .hero-title { padding: 0 20px 28px 24px; }
+      /* The 30px floor in the base clamp() exists so the headline stays
+         legible on a laptop where the image is still fairly large. On a
+         phone the image itself is much smaller, and that floor stops the
+         text from shrinking with it — so the text ends up disproportionately
+         big compared to the photo, unlike desktop where text-to-image size
+         is 1:1 at every width. Dropping straight to the cqw value (no
+         floor) restores that same desktop ratio here: the text always
+         scales exactly with the image — including the extra zoom from the
+         mobile crop below, which is why the multiplier here isn't the
+         plain desktop 5.69 (see the aspect-ratio comment: cropping 15% off
+         each side zooms the image itself by 1/0.7≈1.43x, so the text is
+         scaled up by that same factor to stay in proportion — 5.69 *
+         (1/0.7) ≈ 8.13). */
+      .hero-title { padding: 0 20px 28px 24px; font-size: 8.13cqw; }
+      /* The gold second line is the one most likely to wrap to 2 lines at
+         this size (long single words like "TASARLIYALIM"), so it's scaled
+         down 10% relative to the headline rather than shrinking the whole
+         heading — the italic first line stays at full size. */
+      .hero-title-bold { font-size: 0.9em; }
+      .hero-frame { width: 100%; }
+      /* The slides are shot/composed for a wide PC frame (16/8), which
+         leaves them looking short and cramped in portrait on a phone.
+         Since the img underneath uses object-fit:cover, narrowing the
+         container's aspect-ratio is exactly equivalent to cropping the
+         same amount off both left and right edges and zooming until
+         those new edges fill the frame again — no separate crop step
+         needed. 16/8 * 0.7 (15% off each side) = 7/5. */
+      .hero-visual { aspect-ratio: 7/5; }
+      /* The narrower crop leaves no good spot to overlay the CTA on the
+         photo itself (it either sits on top of the headline text or
+         crowds the now-tighter frame). Instead of overlaying it at all,
+         it's hidden here and a second, non-absolute .hero-cta-mobile
+         (declared below) renders as a normal block under the dots. */
+      .hero-cta { display: none; }
+      .hero-dots { gap: 8px; margin-top: 14px; }
+      .hero-dot { width: 9px; height: 9px; }
+      .hero-cta-mobile { display: flex; align-items: center; gap: 6px; width: fit-content; margin: 16px auto 0; background: #c8a04e; color: #fff; border-radius: 40px; font-family: 'Poppins', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 14px; padding: 12px 24px; box-shadow: 0 10px 24px rgba(200,160,78,0.35); text-decoration: none; }
+
       .about-section { padding: 70px 20px 50px; }
+      .about-heading-wrap { text-align: left; margin-bottom: 28px; }
+      .about-heading { font-size: 18px; letter-spacing: 2px; padding-bottom: 8px; border-bottom-width: 2px; }
+      .about-grid { grid-template-columns: 1fr; gap: 28px; }
+      .about-image { max-width: 100%; margin-left: 0; aspect-ratio: 4/3; }
+      .about-text { margin-left: 0; }
+      .about-body { line-height: 1.55; }
+
       .quote-section { padding: 50px 20px; }
+      .quote-heading { font-size: 26px; line-height: 1.35; }
+
       .services-section { padding: 70px 20px 60px; }
-      .service-card { flex: 0 0 78vw; }
+      .services-grid { grid-template-columns: 1fr; gap: 32px; }
+      .services-marquee-wrap { margin-left: 0; width: 100%; }
+      .service-card { flex: 0 0 62vw; aspect-ratio: 4/5; }
+
       .reviews-section { padding: 70px 20px 60px; }
-      .review-card { flex: 0 0 84vw; }
+      .review-card { flex: 0 0 84vw; padding: 30px 24px; }
+      .review-quote { font-size: 16px; line-height: 1.55; margin: 0 0 18px; }
+
       .contact-section { padding: 50px 20px; }
       .site-footer { padding: 0 20px 28px; }
       .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
@@ -271,7 +361,7 @@
 
 <div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
 
-  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
+  <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:grid; align-items:center; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
     <div style="display:flex; align-items:center; gap:10px; justify-self:start;">
       <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" class="logo-mark" style-hover="transform:scale(1.1) rotate(-4deg);" />
       <div>
@@ -279,14 +369,29 @@
         <div class="brand-tagline" style="letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
       </div>
     </div>
-    <nav class="site-nav" style="display:flex; align-items:center;">
+    <nav class="site-nav">
       <a href="#home" class="nav-link" style="color:{{ navHomeColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">ANA SAYFA</a>
       <a href="#about" class="nav-link" style="color:{{ navAboutColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">HAKKIMIZDA</a>
       <a href="#services" class="nav-link" style="color:{{ navServicesColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">HİZMETLERİMİZ</a>
       <a href="#yorumlar" class="nav-link" style="color:{{ navReviewsColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">YORUMLAR</a>
       <a href="#iletisim" class="nav-link" style="color:{{ navContactColor }}; font-weight:800; letter-spacing:0.5px; white-space:nowrap;" style-hover="color:#c8a04e; letter-spacing:1px;">İLETİŞİM</a>
     </nav>
+    <button type="button" class="hamburger-btn{{ mobileNavOpenClass }}" onclick="{{ toggleMobileMenu }}" aria-label="Menüyü aç" aria-expanded="{{ mobileMenuOpenStr }}" aria-controls="mobile-nav-panel">
+      <span style="background:{{ taglineColor }};"></span>
+      <span style="background:{{ taglineColor }};"></span>
+      <span style="background:{{ taglineColor }};"></span>
+    </button>
   </header>
+
+  <div class="mobile-nav-overlay{{ mobileNavOpenClass }}" onclick="{{ closeMobileMenu }}" aria-hidden="{{ mobileNavAriaHidden }}"></div>
+  <nav id="mobile-nav-panel" class="mobile-nav-panel{{ mobileNavOpenClass }}" aria-hidden="{{ mobileNavAriaHidden }}" aria-label="Mobil menü">
+    <button type="button" class="mobile-nav-close" onclick="{{ closeMobileMenu }}" aria-label="Menüyü kapat">✕</button>
+    <a href="#home" class="mobile-nav-link{{ mobileNavHomeClass }}" onclick="{{ closeMobileMenu }}">ANA SAYFA</a>
+    <a href="#about" class="mobile-nav-link{{ mobileNavAboutClass }}" onclick="{{ closeMobileMenu }}">HAKKIMIZDA</a>
+    <a href="#services" class="mobile-nav-link{{ mobileNavServicesClass }}" onclick="{{ closeMobileMenu }}">HİZMETLERİMİZ</a>
+    <a href="#yorumlar" class="mobile-nav-link{{ mobileNavReviewsClass }}" onclick="{{ closeMobileMenu }}">YORUMLAR</a>
+    <a href="#iletisim" class="mobile-nav-link{{ mobileNavContactClass }}" onclick="{{ closeMobileMenu }}">İLETİŞİM</a>
+  </nav>
 
   <a href="https://www.instagram.com/cingil_tasarim" target="_blank" rel="noopener" class="whatsapp-float instagram-float" aria-label="Instagram'da bizi takip edin" style="position:fixed; left:24px; bottom:110px; z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
     <span class="instagram-icon">
@@ -303,17 +408,17 @@
   </a>
 
   <section id="home" class="hero-section">
-    <div style="width:85%; margin:0 auto;">
-      <div style="position:relative; border-radius:28px; overflow:hidden; aspect-ratio:16/8; container-type:inline-size; animation:heroImgIn 1.3s cubic-bezier(0.16,1,0.3,1) both;" onpointerenter="{{ pauseHero }}" onpointerleave="{{ resumeHero }}">
+    <div class="hero-frame">
+      <div class="hero-visual" style="position:relative; border-radius:28px; overflow:hidden; container-type:inline-size; animation:heroImgIn 1.3s cubic-bezier(0.16,1,0.3,1) both;" onpointerenter="{{ pauseHero }}" onpointerleave="{{ resumeHero }}">
         <sc-for list="{{ heroSlides }}" as="s">
           <div class="hero-slide" style="opacity:{{ s.opacity }}; z-index:{{ s.zIndex }};">
             <img src="{{ s.img }}" alt="{{ s.alt }}" style="object-position:{{ s.pos }}; transform:scale({{ s.scale }});" />
             <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0.68) 0%, rgba(23,21,18,0) 15%, rgba(23,21,18,0.2) 50%, rgba(23,21,18,0) 55%, rgba(23,21,18,0.75) 100%);"></div>
             <div style="position:absolute; left:0; right:0; bottom:0; height:55%; -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 60%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);"></div>
-            <h2 class="hero-title" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .3s both;">{{ s.topText }}</span><span style="color:#c8a04e; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .5s both;">{{ s.boldText }}</span></h2>
+            <h2 class="hero-title" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left; margin:0; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.15; text-transform:uppercase; color:#fff;"><span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#fff; text-transform:none; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .3s both;">{{ s.topText }}</span><span class="hero-title-bold" style="color:#c8a04e; animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .5s both;">{{ s.boldText }}</span></h2>
           </div>
         </sc-for>
-        <a href="https://wa.me/905434818591?text=Merhaba%2C%20randevu%20almak%20istiyorum." target="_blank" rel="noopener" class="hero-cta" style="display:inline-flex; align-items:center; background:#c8a04e; color:#fff; border-radius:40px; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; line-height:1; white-space:nowrap; box-shadow:0 14px 30px rgba(200,160,78,0.4); animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .7s both;" style-hover="transform:translateY(-3px) scale(1.03); box-shadow:0 18px 38px rgba(200,160,78,0.55);">
+        <a href="https://wa.me/905434818591?text=Merhaba%2C%20randevu%20almak%20istiyorum." target="_blank" rel="noopener" class="hero-cta" style="align-items:center; background:#c8a04e; color:#fff; border-radius:40px; font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; line-height:1; white-space:nowrap; box-shadow:0 14px 30px rgba(200,160,78,0.4); animation:heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) .7s both;" style-hover="transform:translateY(-3px) scale(1.03); box-shadow:0 18px 38px rgba(200,160,78,0.55);">
           Randevu Al
           <span style="font-size:1.15em;">→</span>
         </a>
@@ -323,15 +428,19 @@
           <button class="hero-dot{{ s.dotClass }}" onclick="{{ s.onSelect }}" aria-label="{{ s.dotLabel }}"></button>
         </sc-for>
       </div>
+      <a href="https://wa.me/905434818591?text=Merhaba%2C%20randevu%20almak%20istiyorum." target="_blank" rel="noopener" class="hero-cta-mobile">
+        Randevu Al
+        <span style="font-size:1.15em;">→</span>
+      </a>
     </div>
   </section>
 
   <section id="about" class="about-section">
-    <div style="text-align:center; margin-bottom:110px;">
-      <div class="about-heading" style="display:inline-block; letter-spacing:3px; color:#171512; font-weight:700; padding-bottom:14px; border-bottom:3px solid #171512;">HAKKIMIZDA</div>
+    <div class="about-heading-wrap">
+      <div class="about-heading" style="display:inline-block; color:#171512; font-weight:700;">HAKKIMIZDA</div>
     </div>
     <div class="about-grid" style="display:grid; align-items:start;">
-      <div class="about-image" data-reveal="zoom" style="border-radius:24px; overflow:hidden; aspect-ratio:4/5;">
+      <div class="about-image" data-reveal="zoom" style="border-radius:24px; overflow:hidden;">
         <img src="./assets/dugun.jpg" alt="Gelin ve damat sahilde" style="width:100%; height:100%; object-fit:cover; display:block;" style-hover="transform:scale(1.06);" />
       </div>
       <div class="about-text" data-reveal="fade" style="padding-top:0; transition-delay:.1s;">
@@ -344,7 +453,7 @@
   </section>
 
   <section class="quote-section" style="background:#171512;">
-    <h2 lang="tr" class="quote-heading" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(30px,4vw,76px); line-height:1.25; text-transform:uppercase; margin:0 auto; max-width:1500px; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
+    <h2 lang="tr" class="quote-heading" style="font-family:'Poppins',sans-serif; font-weight:700; text-transform:uppercase; margin:0 auto; max-width:1500px; text-align:center;"><span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0s infinite; color:#fff;">Bir</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.4s infinite; color:#fff;">kareye</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 0.8s infinite; color:#fff;">sığmayacak</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.2s infinite; color:#fff;">büyük</span> <span style="animation:wordGold 4.5s cubic-bezier(0.45,0,0.55,1) 1.6s infinite; color:#fff;">hayaller.</span></h2>
   </section>
 
   <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
@@ -363,7 +472,7 @@
       <div class="services-marquee-wrap" style="overflow:hidden; min-width:0;">
       <div class="services-track" style="display:flex; gap:1.519cqw; width:fit-content; animation:svcMarquee 50s linear infinite;" style-hover="animation-play-state:paused;">
         <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
-          <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden; aspect-ratio:9/16;" style-hover="transform:translateY(-8px); box-shadow:0 20px 40px rgba(23,21,18,0.35);">
+          <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden;" style-hover="transform:translateY(-8px); box-shadow:0 20px 40px rgba(23,21,18,0.35);">
             <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
             <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
             <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
@@ -386,9 +495,9 @@
     <div class="reviews-marquee-wrap" style="max-width:1400px; margin:0 auto; overflow:hidden;">
       <div class="reviews-track" style="display:flex; gap:32px; width:fit-content; animation:svcMarquee 48s linear infinite;" style-hover="animation-play-state:paused;">
         <sc-for list="{{ reviewsLoop }}" as="r">
-          <div class="review-card" style="background:#fff; border-radius:24px; padding:44px 36px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc;" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
+          <div class="review-card" style="background:#fff; border-radius:24px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc;" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
             <div class="review-stars" style="color:#c8a04e; font-size:18px; margin-bottom:18px;">★★★★★</div>
-            <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; line-height:1.6; color:#171512; margin:0 0 26px;">"{{ r.quote }}"</p>
+            <p class="review-quote" style="font-family:'Cormorant Garamond',serif; font-style:italic; color:#171512;">"{{ r.quote }}"</p>
             <div style="font-family:'Poppins',sans-serif; font-weight:700; font-size:15px; color:#171512;">{{ r.name }}</div>
             <div style="font-family:'Poppins',sans-serif; font-size:13px; color:#c8a04e; margin-top:2px;">{{ r.event }}</div>
           </div>
@@ -462,7 +571,21 @@ const HERO_SLIDES = [
 ];
 
 class Component extends DCLogic {
-  state = { active: "home", scrolled: false, heroSlide: 0 };
+  state = { active: "home", scrolled: false, heroSlide: 0, mobileMenuOpen: false };
+
+  toggleMobileMenu = () => {
+    this.setState((s) => {
+      const next = !s.mobileMenuOpen;
+      document.body.style.overflow = next ? "hidden" : "";
+      return { mobileMenuOpen: next };
+    });
+  };
+
+  closeMobileMenu = () => {
+    if (!this.state.mobileMenuOpen) return;
+    document.body.style.overflow = "";
+    this.setState({ mobileMenuOpen: false });
+  };
 
   pauseHero = (e) => {
     if (e && e.pointerType && e.pointerType !== "mouse") return;
@@ -511,6 +634,16 @@ class Component extends DCLogic {
     window.addEventListener("scroll", this.onScroll, { passive: true });
     this.onScroll();
 
+    this.onResize = () => {
+      if (window.innerWidth > 640 && this.state.mobileMenuOpen) this.closeMobileMenu();
+    };
+    window.addEventListener("resize", this.onResize);
+
+    this.onKeydown = (e) => {
+      if (e.key === "Escape" && this.state.mobileMenuOpen) this.closeMobileMenu();
+    };
+    window.addEventListener("keydown", this.onKeydown);
+
     this.startHeroRotation();
 
     this.revealObserver = new IntersectionObserver((entries) => {
@@ -526,6 +659,9 @@ class Component extends DCLogic {
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
+    window.removeEventListener("resize", this.onResize);
+    window.removeEventListener("keydown", this.onKeydown);
+    document.body.style.overflow = "";
     if (this.heroTimeout) clearTimeout(this.heroTimeout);
     if (this.heroInterval) clearInterval(this.heroInterval);
     if (this.revealObserver) this.revealObserver.disconnect();
@@ -543,6 +679,15 @@ class Component extends DCLogic {
     const headerBorder = this.state.scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid #ece7dc";
     const headerBlur = this.state.scrolled ? "blur(16px)" : "none";
     const taglineColor = this.state.scrolled ? "#f4ecdf" : "#171512";
+    const mobileMenuOpen = this.state.mobileMenuOpen;
+    const mobileNavOpenClass = mobileMenuOpen ? " open" : "";
+    const mobileNavAriaHidden = mobileMenuOpen ? "false" : "true";
+    const mobileMenuOpenStr = mobileMenuOpen ? "true" : "false";
+    const mobileNavHomeClass = this.state.active === "home" ? " active" : "";
+    const mobileNavAboutClass = this.state.active === "about" ? " active" : "";
+    const mobileNavServicesClass = this.state.active === "services" ? " active" : "";
+    const mobileNavReviewsClass = this.state.active === "yorumlar" ? " active" : "";
+    const mobileNavContactClass = this.state.active === "iletisim" ? " active" : "";
     const raw = [
       ["Organizasyon", "Konseptten uygulamaya, günün her detayını sizin için baştan sona planlıyoruz."],
       ["İsteme, Söz & Nişan", "Ailelerin buluştuğu bu özel günü ince detaylarla süslüyoruz."],
@@ -596,7 +741,7 @@ class Component extends DCLogic {
       dotLabel: "Görsel " + (i + 1),
       onSelect: () => this.setState({ heroSlide: i })
     }));
-    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor };
+    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor, toggleMobileMenu: this.toggleMobileMenu, closeMobileMenu: this.closeMobileMenu, mobileNavOpenClass, mobileNavAriaHidden, mobileMenuOpenStr, mobileNavHomeClass, mobileNavAboutClass, mobileNavServicesClass, mobileNavReviewsClass, mobileNavContactClass };
   }
 }
 </script>
