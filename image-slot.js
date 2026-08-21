@@ -191,7 +191,7 @@
         }
         tombstones.clear();
       })
-      .catch(() => {})
+      .catch(() => { })
       .then(() => { loaded = true; subs.forEach((fn) => fn()); });
     return loadP;
   }
@@ -217,7 +217,7 @@
     if (!loaded) return;
     const w = window.omelette && window.omelette.writeFile;
     if (!w) return;
-    try { Promise.resolve(w(STATE_FILE, JSON.stringify(slots))).catch(() => {}); } catch (e) {}
+    try { Promise.resolve(w(STATE_FILE, JSON.stringify(slots))).catch(() => { }); } catch (e) { }
   }
   function save() {
     if (saving) { saveDirty = true; return; }
@@ -225,7 +225,7 @@
     if (!w) return;
     saving = true;
     Promise.resolve(w(STATE_FILE, JSON.stringify(slots)))
-      .catch(() => {})
+      .catch(() => { })
       .then(() => { saving = false; if (saveDirty) { saveDirty = false; save(); } });
   }
 
@@ -476,8 +476,8 @@
           const prev = getSlot(toId);
           const cur = getSlot(fromId);
           if (!(prev && cur && prev.u && prev.u === cur.u &&
-                prev.s === cur.s && prev.x === cur.x && prev.y === cur.y &&
-                (typeof isFree !== 'function' || isFree(toId)))) continue;
+            prev.s === cur.s && prev.x === cur.x && prev.y === cur.y &&
+            (typeof isFree !== 'function' || isFree(toId)))) continue;
           return toId;
         }
         if (typeof isFree === 'function' && !isFree(toId)) continue;
@@ -648,7 +648,7 @@
           const ux = sx * w0 / diag0, uy = sy * h0 / diag0;
           move = (ev) => {
             const proj = (ev.clientX - rect.left - ox) * ux +
-                         (ev.clientY - rect.top - oy) * uy;
+              (ev.clientY - rect.top - oy) * uy;
             const s = clampS(s0 * proj / diag0);
             const d = diag0 * s / s0;
             this._view.s = s;
@@ -668,7 +668,7 @@
           };
         }
         const up = () => {
-          try { this._spill.releasePointerCapture(e.pointerId); } catch {}
+          try { this._spill.releasePointerCapture(e.pointerId); } catch { }
           this._spill.removeEventListener('pointermove', move);
           this._spill.removeEventListener('pointerup', up);
           this._spill.removeEventListener('pointercancel', up);
@@ -761,9 +761,9 @@
       // catches layout shifts that fire neither (an image above finishing
       // load, streamed DOM pushing the slot down, an ancestor transform
       // change) so the overlay can't detach from the frame.
-      try { this._spill.showPopover(); } catch {}
+      try { this._spill.showPopover(); } catch { }
       // After the spill, so the controls stack above it in the top layer.
-      try { this._ctl.showPopover(); } catch {}
+      try { this._ctl.showPopover(); } catch { }
       this._reposition = () => { if (this.hasAttribute('data-reframe')) this._applyView(); };
       window.addEventListener('scroll', this._reposition, true);
       window.addEventListener('resize', this._reposition);
@@ -808,8 +808,8 @@
         window.removeEventListener('pagehide', this._pagehide);
         this._pagehide = null;
       }
-      try { this._spill.hidePopover(); } catch {}
-      try { this._ctl.hidePopover(); } catch {}
+      try { this._spill.hidePopover(); } catch { }
+      try { this._ctl.hidePopover(); } catch { }
       this._ctl.style.left = ''; this._ctl.style.top = '';
       if (commit) this._commitView();
       this._signalReframe(false);
@@ -1009,7 +1009,7 @@
       // there (unknown pseudo-class), hence the try/catch.
       if (this.hasAttribute('data-reframe')) {
         let onTop = false;
-        try { onTop = this._ctl.matches(':popover-open'); } catch {}
+        try { onTop = this._ctl.matches(':popover-open'); } catch { }
         if (onTop) {
           const r = this.getBoundingClientRect();
           this._ctl.style.left = (r.right - 8) + 'px';
@@ -1187,7 +1187,7 @@
             if (u.protocol === 'http:' || u.protocol === 'https:') {
               href = withReferral(u.href);
             }
-          } catch {}
+          } catch { }
         }
         const mkLink = (text, linkHref) => {
           const a = document.createElement('a');

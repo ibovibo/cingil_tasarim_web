@@ -21,6 +21,33 @@
     ::selection { background: #c8a04e; color: #fff; }
     a { color: #c8a04e; text-decoration: none; }
 
+    .site-intro { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; transition: visibility 0s 1.05s; }
+    .site-intro.is-hidden { visibility: hidden; pointer-events: none; }
+    .site-intro-panel { position: absolute; width: 50%; height: 50%; background: #0a0a0a; transition: transform .9s cubic-bezier(0.76,0,0.24,1); }
+    .site-intro-panel.tl { top: 0; left: 0; }
+    .site-intro-panel.tr { top: 0; right: 0; }
+    .site-intro-panel.bl { bottom: 0; left: 0; }
+    .site-intro-panel.br { bottom: 0; right: 0; }
+    .site-intro.is-hidden .site-intro-panel.tl { transform: translate(-100%, -100%); }
+    .site-intro.is-hidden .site-intro-panel.tr { transform: translate(100%, -100%); transition-delay: .06s; }
+    .site-intro.is-hidden .site-intro-panel.bl { transform: translate(-100%, 100%); transition-delay: .06s; }
+    .site-intro.is-hidden .site-intro-panel.br { transform: translate(100%, 100%); transition-delay: .12s; }
+    .site-intro-content { position: relative; z-index: 1; transition: opacity .35s ease; }
+    .site-intro.is-hidden .site-intro-content { opacity: 0; }
+    .site-intro-text { font-family: 'Poppins', sans-serif; font-weight: 600; color: #c8a04e; font-size: clamp(28px, 6vw, 56px); letter-spacing: 0.55em; text-indent: 0.55em; text-align: center; opacity: 0; animation: introTextIn 1.1s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .site-intro-line { display: block; width: 0; height: 1px; background: #c8a04e; margin: 18px auto 0; animation: introLineIn .9s ease-out .9s forwards; }
+    @keyframes introTextIn { 0% { opacity: 0; letter-spacing: 0.9em; text-indent: 0.9em; } 100% { opacity: 1; letter-spacing: 0.28em; text-indent: 0.28em; } }
+    @keyframes introLineIn { to { width: 140px; } }
+    @media (prefers-reduced-motion: reduce) {
+      .site-intro, .site-intro-panel, .site-intro-content { transition: none; }
+      .site-intro-text, .site-intro-line { animation: none; opacity: 1; width: 140px; }
+      .site-intro.is-hidden { visibility: hidden; }
+      .site-intro.is-hidden .site-intro-panel.tl { transform: translate(-100%, -100%); }
+      .site-intro.is-hidden .site-intro-panel.tr { transform: translate(100%, -100%); }
+      .site-intro.is-hidden .site-intro-panel.bl { transform: translate(-100%, 100%); }
+      .site-intro.is-hidden .site-intro-panel.br { transform: translate(100%, 100%); }
+    }
+
     @keyframes heroFadeUp { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes heroImgIn { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: scale(1); } }
 
@@ -248,7 +275,7 @@
       .services-copy { margin-left: 0; transform: none; }
       /* Without the bleed, .services-copy is confined to column 1. At the
          PC-matched 39.24cqw share that column was only ~556px at 1440px
-         wide — a hair narrower than the ~581px the "Cingil Tasarım
+         wide — a hair narrower than the ~581px the "CingılTasarım
          Organizasyon Olarak" heading needs on one line, so it wrapped to
          two lines even though it never wraps on the >=2560px reference.
          Widening column 1's share (and shrinking column 2's by the same
@@ -452,11 +479,22 @@
   </style>
 </helmet>
 
+<div class="site-intro{{ introClass }}" aria-hidden="true">
+  <span class="site-intro-panel tl"></span>
+  <span class="site-intro-panel tr"></span>
+  <span class="site-intro-panel bl"></span>
+  <span class="site-intro-panel br"></span>
+  <div class="site-intro-content">
+    <span class="site-intro-text">CİNGİL TASARIM</span>
+    <span class="site-intro-line"></span>
+  </div>
+</div>
+
 <div style="background:#fbf9f5; color:#171512; font-family:'Poppins',sans-serif; min-height:100vh; padding-top:82px;">
 
   <header class="site-header" style="position:fixed; top:0; left:0; right:0; z-index:100; display:grid; align-items:center; background:{{ headerBg }}; backdrop-filter:{{ headerBlur }}; -webkit-backdrop-filter:{{ headerBlur }}; border-bottom:{{ headerBorder }};">
     <div style="display:flex; align-items:center; gap:10px; justify-self:start;">
-      <img src="./assets/logo.svg" alt="Cingil Tasarım Organizasyon amblemi" class="logo-mark" style-hover="transform:scale(1.1) rotate(-4deg);" />
+      <img src="./assets/logo.svg" alt="CingılTasarım Organizasyon amblemi" class="logo-mark" style-hover="transform:scale(1.1) rotate(-4deg);" />
       <div>
         <div class="brand-name" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; line-height:1;">Cingil</div>
         <div class="brand-tagline" style="letter-spacing:1.5px; color:{{ taglineColor }}; margin-top:2px; white-space:nowrap;">TASARIM ORGANİZASYON</div>
@@ -538,7 +576,7 @@
       </div>
       <div class="about-text" data-reveal="fade" style="padding-top:0; transition-delay:.1s;">
       <p class="about-quote-1" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
-      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. <span class="about-body-tail">Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</span></p>
+      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingıl Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. <span class="about-body-tail">Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</span></p>
       <p class="about-quote-2" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
       </div>
     </div>
@@ -552,7 +590,7 @@
   <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
     <div class="services-grid" style="display:grid; align-items:center;">
       <div class="services-copy services-title-block" data-reveal="left">
-      <p class="services-title" style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.2; color:#171512; margin-top:0; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
+      <p class="services-title" style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.2; color:#171512; margin-top:0; padding-bottom:10px; border-bottom:3px solid #171512;">Cingıl Tasarım Organizasyon Olarak</p>
       </div>
       <div class="services-copy services-desc-block" data-reveal="left">
       <p class="services-desc" style="font-family:'Poppins',sans-serif; line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. <span class="services-desc-tail">Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</span></p>
@@ -628,7 +666,7 @@
   <footer class="site-footer">
     <div class="footer-grid" data-reveal="up" style="display:grid; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
       <div>
-        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">Cingil Tasarım</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">CingılTasarım</div>
         <p style="font-size:13px; line-height:1.7; color:#7a7669; font-weight:300; max-width:300px; margin:0;">Düğün • Nişan • Kına • Özel Etkinlik Organizasyonları</p>
       </div>
       <div>
@@ -655,7 +693,7 @@
         </div>
       </div>
     </div>
-    <div style="border-top:1px solid #ece7dc; padding-top:22px; font-size:12px; color:#a29e92; text-align:center;">© 2026 Cingil Tasarım Organizasyon. Tüm Hakları Saklıdır.</div>
+    <div style="border-top:1px solid #ece7dc; padding-top:22px; font-size:12px; color:#a29e92; text-align:center;">© 2026 CingılTasarım Organizasyon. Tüm Hakları Saklıdır.</div>
   </footer>
 
 </div>
@@ -664,13 +702,13 @@
 <script type="text/x-dc" data-dc-script>
 const HERO_SLIDES = [
   { img: "./assets/ana-header.png", alt: "Gelin çiçekler arasında", pos: "center 30%", topText: "Mutluluğunuzu", boldText: "BİZ TASARLIYALIM" },
-  { img: "./assets/ana-header2.png?v=2", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Hikayenizi", boldText: "GÖRKEMLE YAZALIM" },
-  { img: "./assets/ana-header3.png?v=2", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Anılarınızı", boldText: "SONSUZLAŞTIRALIM" },
-  { img: "./assets/ana-header4.png", alt: "Cingil Tasarım Organizasyon'dan bir an", pos: "center", topText: "Özel Günlerinizi", boldText: "ZARAFETLE SÜSLEYELİM" }
+  { img: "./assets/ana-header2.png?v=2", alt: "CingılTasarım Organizasyon'dan bir an", pos: "center", topText: "Hikayenizi", boldText: "GÖRKEMLE YAZALIM" },
+  { img: "./assets/ana-header3.png?v=2", alt: "CingılTasarım Organizasyon'dan bir an", pos: "center", topText: "Anılarınızı", boldText: "SONSUZLAŞTIRALIM" },
+  { img: "./assets/ana-header4.png", alt: "CingılTasarım Organizasyon'dan bir an", pos: "center", topText: "Özel Günlerinizi", boldText: "ZARAFETLE SÜSLEYELİM" }
 ];
 
 class Component extends DCLogic {
-  state = { active: "home", scrolled: false, heroSlide: 0, mobileMenuOpen: false };
+  state = { active: "home", scrolled: false, heroSlide: 0, mobileMenuOpen: false, introHidden: false };
 
   toggleMobileMenu = () => {
     this.setState((s) => {
@@ -721,6 +759,13 @@ class Component extends DCLogic {
   componentDidMount() {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
+
+    document.body.style.overflow = "hidden";
+    this.introTimeout = setTimeout(() => {
+      this.introTimeout = null;
+      this.setState({ introHidden: true });
+      document.body.style.overflow = "";
+    }, 1900);
     this.sectionIds = ["home", "about", "services", "yorumlar", "iletisim"];
     this.onScroll = () => {
       const mid = window.innerHeight * 0.35;
@@ -767,6 +812,7 @@ class Component extends DCLogic {
     document.body.style.overflow = "";
     if (this.heroTimeout) clearTimeout(this.heroTimeout);
     if (this.heroInterval) clearInterval(this.heroInterval);
+    if (this.introTimeout) clearTimeout(this.introTimeout);
     if (this.revealObserver) this.revealObserver.disconnect();
   }
 
@@ -791,6 +837,7 @@ class Component extends DCLogic {
     const mobileNavServicesClass = this.state.active === "services" ? " active" : "";
     const mobileNavReviewsClass = this.state.active === "yorumlar" ? " active" : "";
     const mobileNavContactClass = this.state.active === "iletisim" ? " active" : "";
+    const introClass = this.state.introHidden ? " is-hidden" : "";
     const raw = [
       ["Organizasyon", "Konseptten uygulamaya, günün her detayını sizin için baştan sona planlıyoruz."],
       ["İsteme, Söz & Nişan", "Ailelerin buluştuğu bu özel günü ince detaylarla süslüyoruz."],
@@ -830,9 +877,9 @@ class Component extends DCLogic {
       ["Derya & Kerem", "Nişan Organizasyonu", "Nişanımız için tercih ettik ve iyi ki de etmişiz. Çiçeklerin renkleri, masa düzeni, arka fon her şey birbirine çok yakışmıştı. Gelen misafirlerden de çok güzel yorumlar aldık 😊"],
       ["Fatma K.", "Açılış Organizasyonu", "Açılış organizasyonumuz için çalıştık. Mekanın havasını tamamen değiştirdiler. Özellikle giriş kısmındaki süslemeler çok beğenildi. İlginiz için teşekkür ederiz."],
       ["İrem & Furkan", "Organizasyon", "Her şeyi son anda netleştirmemize rağmen yardımcı oldular. Sonuç gerçekten beklediğimizden güzel oldu. Özellikle çiçek ve masa detayları çok başarılıydı. Ellerinize sağlık 🌸"],
-      ["Selin A.", "Doğum Günü", "Kızımızın doğum günü için Cingil Tasarım ile çalıştık. Konsept konusunda çok güzel fikirler verdiler, sonuç da gerçekten çok tatlı oldu. Çocuklar kadar biz de çok beğendik 😊"],
+      ["Selin A.", "Doğum Günü", "Kızımızın doğum günü için CingılTasarım ile çalıştık. Konsept konusunda çok güzel fikirler verdiler, sonuç da gerçekten çok tatlı oldu. Çocuklar kadar biz de çok beğendik 😊"],
       ["Melis K.", "Doğum Günü", "Doğum günü organizasyonu için sade bir konsept istemiştik. Her detayla tek tek ilgilendiler, özellikle masa ve arka fon çok güzel olmuştu. Teşekkür ederiz 🌸"],
-      ["Burak D.", "Açılış Organizasyonu", "Açılış etkinliğimiz için Cingil Tasarım ile çalıştık. Kurulumdan etkinlik bitimine kadar her şey düzenliydi."]
+      ["Burak D.", "Açılış Organizasyonu", "Açılış etkinliğimiz için CingılTasarım ile çalıştık. Kurulumdan etkinlik bitimine kadar her şey düzenliydi."]
     ].map(r => ({ name: r[0], event: r[1], quote: r[2] }));
     const reviewsLoop = reviews.concat(reviews);
     const heroSlides = HERO_SLIDES.map((s, i) => ({
@@ -844,7 +891,7 @@ class Component extends DCLogic {
       dotLabel: "Görsel " + (i + 1),
       onSelect: () => this.setState({ heroSlide: i })
     }));
-    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor, toggleMobileMenu: this.toggleMobileMenu, closeMobileMenu: this.closeMobileMenu, mobileNavOpenClass, mobileNavAriaHidden, mobileMenuOpenStr, mobileNavHomeClass, mobileNavAboutClass, mobileNavServicesClass, mobileNavReviewsClass, mobileNavContactClass, preventCardClick: this.preventCardClick };
+    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor, toggleMobileMenu: this.toggleMobileMenu, closeMobileMenu: this.closeMobileMenu, mobileNavOpenClass, mobileNavAriaHidden, mobileMenuOpenStr, mobileNavHomeClass, mobileNavAboutClass, mobileNavServicesClass, mobileNavReviewsClass, mobileNavContactClass, introClass, preventCardClick: this.preventCardClick };
   }
 }
 </script>
