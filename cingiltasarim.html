@@ -87,12 +87,12 @@
     .hero-frame { width: 85%; margin: 0 auto; }
     .hero-visual { aspect-ratio: 16/8; }
     .about-image img { transition: transform .8s cubic-bezier(0.16,1,0.3,1); }
-    .services-cta { transition: transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease; }
+    .services-cta { margin-top: 42px; padding: 22px 34px; transition: transform .35s cubic-bezier(0.34,1.56,0.64,1), box-shadow .35s ease; }
     .services-arrow { display: inline-block; transition: transform .3s ease; }
     .services-track { transition: none; }
     .service-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
     .service-card-arrow { display: inline-block; transition: transform .3s ease; }
-    .reviews-track { transition: none; }
+    .reviews-track { animation: svcMarquee 48s linear infinite; transition: none; }
     .review-card { transition: transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s ease; }
     .review-stars { letter-spacing: 2px; }
 
@@ -176,11 +176,23 @@
        of the screen instead of shrinking gracefully — there's no "smaller
        runway" for it to scale into, so it's turned off instead. */
     .services-section { padding: 180px 0 100px 20px; container-type: inline-size; }
+    /* Desktop keeps the title and description stacked in column 1 and the
+       marquee spanning both their rows in column 2 — the same composition
+       as when they were one .services-copy block — but the two text
+       pieces are now separate grid items (each still carries the shared
+       .services-copy bleed/positioning) so the mobile tier below can
+       reorder title → slider → description with `order` instead of
+       being stuck with the description directly under the title. */
     .services-grid { grid-template-columns: minmax(0, 39.24cqw) minmax(0, 58.987cqw); gap: 1.772cqw; }
-    .services-copy { margin-left: -240px; transform: translateY(-70px); max-width: clamp(300px, 60.76cqw, 960px); }
+    .services-copy { text-align: left; margin-left: -240px; transform: translateY(-70px); max-width: clamp(300px, 60.76cqw, 960px); }
+    .services-title-block { grid-column: 1; grid-row: 1; }
+    .services-desc-block { grid-column: 1; grid-row: 2; }
     .services-title { font-size: clamp(24px, 2.911cqw, 46px); margin-bottom: 60px; }
     .services-desc { font-size: clamp(16px, 1.899cqw, 30px); }
-    .services-marquee-wrap { margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
+    .services-marquee-wrap { grid-column: 2; grid-row: 1 / span 2; margin-left: 7.595cqw; width: calc(100% + 11.392cqw); }
+    .services-cta-inner { gap: 18px; }
+    .services-cta-text { font-size: 20px; }
+    .services-arrow { font-size: 24px; }
     .service-card { flex: 0 0 clamp(220px, 31.646cqw, 500px); aspect-ratio: 9/16; }
 
     .reviews-section { padding: 130px 60px; }
@@ -338,20 +350,80 @@
       .about-heading { font-size: 18px; letter-spacing: 2px; padding-bottom: 8px; border-bottom-width: 2px; }
       .about-grid { grid-template-columns: 1fr; gap: 28px; }
       .about-image { max-width: 100%; margin-left: 0; aspect-ratio: 4/3; }
-      .about-text { margin-left: 0; }
-      .about-body { line-height: 1.55; }
+      .about-text { margin-left: 0; text-align: center; }
+      /* Only the paragraph gets the soft card — the two quote lines stay
+         plain text above/below it. */
+      .about-body { line-height: 1.55; background: #fff; border: 1px solid #ece7dc; border-radius: 16px; padding: 18px 20px; }
+      /* Shortened for mobile only — desktop keeps the full paragraph. */
+      .about-body-tail { display: none; }
 
       .quote-section { padding: 50px 20px; }
       .quote-heading { font-size: 26px; line-height: 1.35; }
 
       .services-section { padding: 70px 20px 60px; }
-      .services-grid { grid-template-columns: 1fr; gap: 32px; }
-      .services-marquee-wrap { margin-left: 0; width: 100%; }
+      .services-grid { grid-template-columns: 1fr; gap: 24px; }
+      /* Single column now, so title/desc no longer need the row split
+         that kept them paired with the marquee's column on desktop —
+         `order` alone sequences title → slider → description. */
+      .services-title-block { grid-column: 1; grid-row: auto; order: 1; }
+      .services-marquee-wrap { grid-column: 1; grid-row: auto; order: 2; margin-left: 0; width: 100%; }
+      .services-desc-block { grid-column: 1; grid-row: auto; order: 3; }
       .service-card { flex: 0 0 62vw; aspect-ratio: 4/5; }
+      /* The title's floor from the 2500px tier (20px) still wraps to 2
+         lines at this width — dropping it further gets it back on one
+         line. */
+      .services-title { font-size: 17px; margin-bottom: 16px; }
+      .services-cta { margin-top: 20px; padding: 12px 20px; }
+      .services-cta-inner { gap: 10px; }
+      .services-cta-text { font-size: 14px; }
+      .services-arrow { font-size: 16px; }
+      /* The real bug behind "still leaning left": .services-copy carries a
+         desktop max-width (clamp floors to 300px here) meant to cap the
+         text column next to the marquee. With the grid now 1 column at
+         ~335px, that 300px cap left a ~35px gap stuck on the right —
+         text-align:center was centering the text WITHIN that undersized,
+         left-stuck box, not within the actual row, which reads as a
+         consistent ~10% lean. Dropping the cap lets both blocks fill the
+         full row so centering has no leftover gap to lean into. */
+      .services-copy { max-width: none; }
+      /* Title stays plain (no card) and centered on its own. Only the
+         description + button get the soft card, and its content is
+         centered too instead of sitting left inside the box. */
+      .services-title-block { text-align: center; }
+      .services-desc-block { text-align: center; background: #fff; border: 1px solid #ece7dc; border-radius: 16px; padding: 18px 20px; }
+      /* Shortened for mobile only — desktop keeps the full paragraph. */
+      .services-desc-tail { display: none; }
+      /* On touch screens, tapping a card leaves a "stuck" :hover — mobile
+         browsers apply :hover on tap and don't clear it the way a real
+         mouse-leave does — which silently freezes the pause-on-hover
+         behavior meant for desktop mouse users, so the slider just stops
+         after the first touch. That behavior is injected at runtime as
+         `.scpN:hover { animation-play-state: paused !important; }`, added
+         to the page after this stylesheet, so normal source order can't
+         win against it — only a more specific selector can, since a plain
+         inline style (tried and reverted — this framework converts the
+         style="" string to a JS style object for React, which silently
+         drops "!important" from any value it contains) can't out-rank a
+         stylesheet !important rule either. The tripled class here is that
+         more-specific selector: three repeats of the same class outrank
+         the one-class-plus-:hover selector regardless of load order or
+         which element most recently got a stuck :hover, and keep the
+         animation running on mobile no matter what. */
+      .services-track.services-track.services-track { animation-play-state: running !important; }
+      /* Same stuck-:hover problem on the cards themselves — the lift
+         (translateY(-8px)) meant for a desktop mouse hover was staying
+         "on" after a tap, making the tapped card visibly jump up and
+         stay there. There's no default transform on these cards outside
+         of that hover rule, so forcing it back to none is safe. */
+      .service-card.service-card.service-card { transform: none !important; }
 
       .reviews-section { padding: 70px 20px 60px; }
       .review-card { flex: 0 0 84vw; padding: 30px 24px; }
       .review-quote { font-size: 16px; line-height: 1.55; margin: 0 0 18px; }
+      /* Same stuck-:hover fixes as the services marquee/cards above. */
+      .reviews-track.reviews-track.reviews-track { animation-play-state: running !important; }
+      .review-card.review-card.review-card { transform: none !important; }
+      .reviews-track { animation-duration: 20s; }
 
       /* The 2-column info/map split (kept narrow, same shape as desktop)
          made the map itself a tall, cramped sliver. Restacking to one
@@ -361,8 +433,12 @@
          further. */
       .contact-section { padding: 50px 20px; }
       .contact-grid { grid-template-columns: 1fr; gap: 24px; }
-      .contact-info { display: flex; flex-wrap: wrap; gap: 20px 14px; }
-      .contact-info-group { flex: 1 1 0; min-width: 92px; overflow-wrap: break-word; word-break: break-word; }
+      /* Each group stacked as its own small heading (KONUM, İLETİŞİM
+         KANALLARI, INSTAGRAM) with its value below it — not beside it —
+         and the three groups stacked one under another instead of 3
+         side-by-side columns that were cramped at this width. */
+      .contact-info { display: flex; flex-direction: column; gap: 18px; }
+      .contact-info-group { overflow-wrap: break-word; word-break: break-word; }
       .contact-text { font-size: 13px; }
       .contact-phone { font-size: 14px; }
       .contact-map { aspect-ratio: 1/1; width: 100%; max-width: 100%; min-height: 0; }
@@ -462,7 +538,7 @@
       </div>
       <div class="about-text" data-reveal="fade" style="padding-top:0; transition-delay:.1s;">
       <p class="about-quote-1" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 24px;">"Her şey bir hayalle başladı..."</p>
-      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</p>
+      <p class="about-body" style="line-height:1.7; color:#5c584f; font-weight:400; margin:0 0 26px;">1996'da Trabzon'da çıktığımız bu yolda, insanların hayatındaki en özel anları unutulmaz kılmayı hedefledik. Cingil Tasarım Organizasyon olarak; düğün, nişan, kına ve özel davet organizasyonları başta olmak üzere, hayallerinizdeki atmosferi gerçeğe dönüştürüyoruz. Dekorasyondan masa düzenine, çiçek tasarımlarından mekan konseptine kadar her detayı titizlikle planlayarak sizin için kusursuz bir bütün oluşturuyoruz. <span class="about-body-tail">Çünkü bizce bir organizasyon yalnızca bir günün hazırlığı değil; yıllar sonra bile hatırlanacak anıların tasarlanmasıdır.</span></p>
       <p class="about-quote-2" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; color:#c8a04e; margin:0 0 40px;">Siz hayal edin, biz tasarlayalım.</p>
       </div>
     </div>
@@ -475,21 +551,23 @@
 
   <section id="services" class="services-section" style="max-width:1600px; margin:0 auto;">
     <div class="services-grid" style="display:grid; align-items:center;">
-      <div class="services-copy" data-reveal="left" style="text-align:left;">
+      <div class="services-copy services-title-block" data-reveal="left">
       <p class="services-title" style="display:inline-block; font-family:'Poppins',sans-serif; font-weight:700; line-height:1.2; color:#171512; margin-top:0; padding-bottom:10px; border-bottom:3px solid #171512;">Cingil Tasarım Organizasyon Olarak</p>
-      <p class="services-desc" style="font-family:'Poppins',sans-serif; line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</p>
-      <div class="services-cta" style="margin-top:42px; padding:22px 34px; border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;" style-hover="transform:translateY(-4px); box-shadow:0 24px 54px rgba(23,21,18,0.3);">
-        <div style="display:flex; gap:18px; align-items:center;">
-          <span style="font-family:'Poppins',sans-serif; font-size:20px; font-weight:700; color:#fff;">Bize Ulaşın</span>
-          <span class="services-arrow" style="font-size:24px; color:#c8a04e;">→</span>
-          <a href="https://wa.me/905434818591" style="font-family:'Poppins',sans-serif; color:#c8a04e; font-size:20px; font-weight:700;">WhatsApp</a>
+      </div>
+      <div class="services-copy services-desc-block" data-reveal="left">
+      <p class="services-desc" style="font-family:'Poppins',sans-serif; line-height:1.65; color:#c8a04e; font-weight:600; margin:0;">Düğün, nişan, kına ve özel organizasyonlardan; isteme, söz &amp; nişan, çiçek tasarımı, kına salonu, toplantı &amp; seminer, açılış, mezuniyet, doğum günü ve yemek etkinliklerine kadar birçok alanda hizmet sunuyoruz. Her organizasyonun kendine özgü bir atmosferi olması gerektiğine inanıyor, konsept ve dekorasyondan mekan düzenine kadar tüm detayları özenle planlıyoruz. <span class="services-desc-tail">Özel günlerinizi ihtiyaçlarınıza ve beklentilerinize göre şekillendirirken, organizasyonlarınızın müzik ve atmosferini tamamlamak için DJ, orkestra ve ses hizmetleri de sağlıyoruz.</span></p>
+      <div class="services-cta" style="border-radius:28px; background:#171512; border:1px solid #171512; box-shadow:0 18px 44px rgba(23,21,18,0.18); display:inline-flex; align-items:center; justify-content:center;" style-hover="transform:translateY(-4px); box-shadow:0 24px 54px rgba(23,21,18,0.3);">
+        <div class="services-cta-inner" style="display:flex; align-items:center;">
+          <span class="services-cta-text" style="font-family:'Poppins',sans-serif; font-weight:700; color:#fff;">Bize Ulaşın</span>
+          <span class="services-arrow" style="color:#c8a04e;">→</span>
+          <a href="https://wa.me/905434818591" class="services-cta-text" style="font-family:'Poppins',sans-serif; color:#c8a04e; font-weight:700;">WhatsApp</a>
         </div>
       </div>
       </div>
       <div class="services-marquee-wrap" style="overflow:hidden; min-width:0;">
       <div class="services-track" style="display:flex; gap:1.519cqw; width:fit-content; animation:svcMarquee 50s linear infinite;" style-hover="animation-play-state:paused;">
         <sc-for list="{{ servicesLoop }}" as="s" hint-placeholder-count="18">
-          <a href="#" class="service-card" style="display:block; position:relative; border-radius:20px; overflow:hidden;" style-hover="transform:translateY(-8px); box-shadow:0 20px 40px rgba(23,21,18,0.35);">
+          <a href="#" class="service-card" onclick="{{ preventCardClick }}" style="display:block; position:relative; border-radius:20px; overflow:hidden;" style-hover="transform:translateY(-8px); box-shadow:0 20px 40px rgba(23,21,18,0.35);">
             <image-slot id="{{ s.imgId }}" shape="rect" placeholder="{{ s.title }}" style="width:100%; height:100%;"></image-slot>
             <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,21,18,0) 45%, rgba(23,21,18,0.85) 100%); pointer-events:none;"></div>
             <div style="position:absolute; top:18px; left:18px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:#e8d4a0;">{{ s.num }}</div>
@@ -510,7 +588,7 @@
       <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:20px; color:#c8a04e; margin:18px 0 0;">Bize güvenen çiftlerin ve ailelerin sözleri</p>
     </div>
     <div class="reviews-marquee-wrap" style="max-width:1400px; margin:0 auto; overflow:hidden;">
-      <div class="reviews-track" style="display:flex; gap:32px; width:fit-content; animation:svcMarquee 48s linear infinite;" style-hover="animation-play-state:paused;">
+      <div class="reviews-track" style="display:flex; gap:32px; width:fit-content;" style-hover="animation-play-state:paused;">
         <sc-for list="{{ reviewsLoop }}" as="r">
           <div class="review-card" style="background:#fff; border-radius:24px; box-shadow:0 18px 44px rgba(23,21,18,0.08); border:1px solid #ece7dc;" style-hover="transform:translateY(-8px); box-shadow:0 26px 54px rgba(23,21,18,0.14);">
             <div class="review-stars" style="color:#c8a04e; font-size:18px; margin-bottom:18px;">★★★★★</div>
@@ -606,6 +684,10 @@ class Component extends DCLogic {
     if (!this.state.mobileMenuOpen) return;
     document.body.style.overflow = "";
     this.setState({ mobileMenuOpen: false });
+  };
+
+  preventCardClick = (e) => {
+    e.preventDefault();
   };
 
   pauseHero = (e) => {
@@ -762,7 +844,7 @@ class Component extends DCLogic {
       dotLabel: "Görsel " + (i + 1),
       onSelect: () => this.setState({ heroSlide: i })
     }));
-    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor, toggleMobileMenu: this.toggleMobileMenu, closeMobileMenu: this.closeMobileMenu, mobileNavOpenClass, mobileNavAriaHidden, mobileMenuOpenStr, mobileNavHomeClass, mobileNavAboutClass, mobileNavServicesClass, mobileNavReviewsClass, mobileNavContactClass };
+    return { services, servicesLoop, features, stats, reviews, reviewsLoop, heroSlides, pauseHero: this.pauseHero, resumeHero: this.resumeHero, navHomeColor, navServicesColor, navAboutColor, navContactColor, navReviewsColor, headerBg, headerBorder, headerBlur, taglineColor, toggleMobileMenu: this.toggleMobileMenu, closeMobileMenu: this.closeMobileMenu, mobileNavOpenClass, mobileNavAriaHidden, mobileMenuOpenStr, mobileNavHomeClass, mobileNavAboutClass, mobileNavServicesClass, mobileNavReviewsClass, mobileNavContactClass, preventCardClick: this.preventCardClick };
   }
 }
 </script>
