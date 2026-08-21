@@ -34,7 +34,8 @@
 
     .brand-tagline { transition: color .4s ease; }
     .nav-link { transition: color .3s ease, letter-spacing .3s ease; }
-    .whatsapp-float { transition: transform .3s cubic-bezier(0.34,1.56,0.64,1); }
+    .whatsapp-float { position: fixed; left: 24px; bottom: 24px; transition: transform .3s cubic-bezier(0.34,1.56,0.64,1); }
+    .instagram-float { bottom: 110px; }
     .whatsapp-icon { width: 70px; height: 70px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 10px 26px rgba(37,211,102,0.45); transition: box-shadow .3s ease; }
     .whatsapp-float:hover .whatsapp-icon { box-shadow: 0 14px 34px rgba(37,211,102,0.6); }
     .instagram-icon { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 10px 26px rgba(220,39,67,0.45); transition: box-shadow .3s ease; }
@@ -192,11 +193,11 @@
     .review-quote { font-size: 20px; line-height: 1.6; margin: 0 0 26px; }
 
     .contact-section { padding: 90px 60px; }
-    .contact-grid { grid-template-columns: 1fr 1.3fr; }
+    .contact-grid { grid-template-columns: 1fr 1.3fr; gap: 60px; }
     .contact-map { margin-top: -260px; max-width: 85%; }
 
     .site-footer { padding: 0 60px 40px; }
-    .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+    .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; }
 
     /* On a real >=2560px PC monitor the services section comfortably fits
        one screen (~1170px tall in a ~1440px viewport). Scaled purely
@@ -268,11 +269,11 @@
     @media (max-width: 640px) {
       .brand-tagline { display: none; }
       .whatsapp-float { left: 16px; bottom: 16px; }
-      .instagram-float { left: 16px; bottom: 94px; }
-      .whatsapp-icon { width: 56px; height: 56px; }
-      .whatsapp-icon svg { width: 30px; height: 30px; }
-      .instagram-icon { width: 56px; height: 56px; }
-      .instagram-icon svg { width: 26px; height: 26px; }
+      .instagram-float { left: 16px; bottom: 74px; }
+      .whatsapp-icon { width: 48px; height: 48px; }
+      .whatsapp-icon svg { width: 26px; height: 26px; }
+      .instagram-icon { width: 48px; height: 48px; }
+      .instagram-icon svg { width: 22px; height: 22px; }
       .whatsapp-label { font-size: 12px; }
 
       /* Top nav is replaced by the hamburger + slide-in panel below. The
@@ -333,7 +334,7 @@
       .hero-cta-mobile { display: flex; align-items: center; gap: 6px; width: fit-content; margin: 16px auto 0; background: #c8a04e; color: #fff; border-radius: 40px; font-family: 'Poppins', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 14px; padding: 12px 24px; box-shadow: 0 10px 24px rgba(200,160,78,0.35); text-decoration: none; }
 
       .about-section { padding: 70px 20px 50px; }
-      .about-heading-wrap { text-align: left; margin-bottom: 28px; }
+      .about-heading-wrap { text-align: center; margin-bottom: 28px; }
       .about-heading { font-size: 18px; letter-spacing: 2px; padding-bottom: 8px; border-bottom-width: 2px; }
       .about-grid { grid-template-columns: 1fr; gap: 28px; }
       .about-image { max-width: 100%; margin-left: 0; aspect-ratio: 4/3; }
@@ -352,9 +353,25 @@
       .review-card { flex: 0 0 84vw; padding: 30px 24px; }
       .review-quote { font-size: 16px; line-height: 1.55; margin: 0 0 18px; }
 
+      /* The 2-column info/map split (kept narrow, same shape as desktop)
+         made the map itself a tall, cramped sliver. Restacking to one
+         column instead — a compact 3-across row for konum/kanallar/
+         instagram, then a full-width square map underneath — reads
+         better at this width than shrinking the desktop composition
+         further. */
       .contact-section { padding: 50px 20px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 24px; }
+      .contact-info { display: flex; flex-wrap: wrap; gap: 20px 14px; }
+      .contact-info-group { flex: 1 1 0; min-width: 92px; overflow-wrap: break-word; word-break: break-word; }
+      .contact-text { font-size: 13px; }
+      .contact-phone { font-size: 14px; }
+      .contact-map { aspect-ratio: 1/1; width: 100%; max-width: 100%; min-height: 0; }
+      /* Same idea for the footer: the 4 columns from the desktop grid
+         were too tight to breathe at this width even narrowed down —
+         switching to a 2x2 arrangement keeps it compact and short while
+         giving each section enough room that they stop touching. */
       .site-footer { padding: 0 20px 28px; }
-      .footer-grid { grid-template-columns: 1fr; row-gap: 26px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
     }
   </style>
 </helmet>
@@ -393,14 +410,14 @@
     <a href="#iletisim" class="mobile-nav-link{{ mobileNavContactClass }}" onclick="{{ closeMobileMenu }}">İLETİŞİM</a>
   </nav>
 
-  <a href="https://www.instagram.com/cingil_tasarim" target="_blank" rel="noopener" class="whatsapp-float instagram-float" aria-label="Instagram'da bizi takip edin" style="position:fixed; left:24px; bottom:110px; z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
+  <a href="https://www.instagram.com/cingil_tasarim" target="_blank" rel="noopener" class="whatsapp-float instagram-float" aria-label="Instagram'da bizi takip edin" style="z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
     <span class="instagram-icon">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line></svg>
     </span>
     <span class="whatsapp-label">Takip Edin</span>
   </a>
 
-  <a href="https://wa.me/905434818591" target="_blank" rel="noopener" class="whatsapp-float" aria-label="WhatsApp ile bize ulaşın" style="position:fixed; left:24px; bottom:24px; z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
+  <a href="https://wa.me/905434818591" target="_blank" rel="noopener" class="whatsapp-float" aria-label="WhatsApp ile bize ulaşın" style="z-index:200; display:flex; align-items:center;" style-hover="transform:scale(1.06);">
     <span class="whatsapp-icon">
       <svg width="42" height="42" viewBox="0 0 32 32" fill="#fff" style="display:block;"><path d="M16.004 3C9.02 3 3.354 8.665 3.354 15.646c0 2.325.633 4.5 1.732 6.368L3 29l7.15-2.043a12.6 12.6 0 0 0 5.854 1.44h.005c6.984 0 12.65-5.664 12.65-12.646C28.66 8.769 22.995 3.003 16.004 3m0 23.1a10.5 10.5 0 0 1-5.354-1.466l-.384-.228-3.99 1.14 1.16-3.88-.25-.398a10.44 10.44 0 0 1-1.603-5.577c0-5.788 4.71-10.497 10.503-10.497 2.805 0 5.44 1.093 7.423 3.078a10.43 10.43 0 0 1 3.076 7.428c0 5.79-4.71 10.5-10.581 10.5m5.755-7.868c-.315-.158-1.864-.92-2.153-1.026-.29-.105-.5-.158-.71.158s-.815 1.026-1 1.237-.368.238-.684.08-1.335-.492-2.542-1.567c-.94-.838-1.574-1.874-1.758-2.19s-.02-.487.138-.645c.142-.142.315-.369.473-.554.157-.184.21-.316.315-.526s.053-.395-.026-.554-.71-1.71-.973-2.343c-.256-.616-.517-.533-.71-.543l-.605-.01c-.21 0-.552.079-.842.395s-1.104 1.079-1.104 2.631 1.13 3.055 1.288 3.266c.157.21 2.226 3.4 5.394 4.767.754.325 1.343.52 1.802.667.757.24 1.446.207 1.99.126.607-.091 1.864-.762 2.127-1.498s.263-1.368.184-1.499-.288-.21-.604-.368" /></svg>
     </span>
@@ -508,16 +525,20 @@
 
   <section id="iletisim" class="contact-section" style="background:#171512; color:#fff;">
     <h2 lang="tr" data-reveal="fade" style="font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(28px,4.5vw,48px); line-height:1.2; text-transform:uppercase; margin:0 0 60px; max-width:720px;">Hayalinizi <span style="font-weight:700; color:#fff;">birlikte</span><br />konuşalım.</h2>
-    <div class="contact-grid" style="display:grid; gap:60px; border-top:1px solid #322e28; padding-top:50px;">
-      <div data-reveal="left">
-        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">KONUM</div>
-        <p style="font-size:16px; line-height:1.6; margin:0 0 34px;">Cumhuriyet Mahallesi<br />Yavuz Sultan Selim Bulvarı No: 167/A</p>
-        <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">İLETİŞİM KANALLARI</div>
-        <p style="font-size:16px; margin:0 0 6px;">muzeyyenkasimoglu@hotmail.com</p>
-        <p style="font-size:18px; font-weight:600; margin:0 0 34px;">0543 481 85 91</p>
-        <div>
+    <div class="contact-grid" style="display:grid; border-top:1px solid #322e28; padding-top:50px;">
+      <div class="contact-info" data-reveal="left">
+        <div class="contact-info-group">
+          <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">KONUM</div>
+          <p class="contact-text" style="font-size:16px; line-height:1.6; margin:0 0 34px;">Cumhuriyet Mahallesi<br />Yavuz Sultan Selim Bulvarı No: 167/A</p>
+        </div>
+        <div class="contact-info-group">
+          <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">İLETİŞİM KANALLARI</div>
+          <p class="contact-text" style="font-size:16px; margin:0 0 6px;">muzeyyenkasimoglu@hotmail.com</p>
+          <p class="contact-phone" style="font-size:18px; font-weight:600; margin:0 0 34px;">0543 481 85 91</p>
+        </div>
+        <div class="contact-info-group">
           <div style="font-size:11px; letter-spacing:2px; color:#8a867a; font-style:italic; margin-bottom:12px;">INSTAGRAM</div>
-          <a href="https://www.instagram.com/cingil_tasarim" style="color:#fff; font-size:16px;" style-hover="color:#c8a04e;">@cingil_tasarim</a>
+          <a href="https://www.instagram.com/cingil_tasarim" class="contact-text" style="color:#fff; font-size:16px;" style-hover="color:#c8a04e;">@cingil_tasarim</a>
         </div>
       </div>
       <div class="contact-map" data-reveal="right" style="border-radius:20px; overflow:hidden; align-self:stretch; transition-delay:.1s;">
@@ -527,7 +548,7 @@
   </section>
 
   <footer class="site-footer">
-    <div class="footer-grid" data-reveal="up" style="display:grid; gap:50px; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
+    <div class="footer-grid" data-reveal="up" style="display:grid; padding-bottom:44px; border-top:1px solid #ece7dc; padding-top:50px;">
       <div>
         <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:26px; color:#c8a04e; margin-bottom:14px;">Cingil Tasarım</div>
         <p style="font-size:13px; line-height:1.7; color:#7a7669; font-weight:300; max-width:300px; margin:0;">Düğün • Nişan • Kına • Özel Etkinlik Organizasyonları</p>
